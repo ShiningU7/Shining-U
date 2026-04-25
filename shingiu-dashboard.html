@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ShiningU — College Admissions Intelligence</title>
+<meta name="description" content="Daily college admissions intelligence: test policies, deadlines, financial aid, trends, and workforce data — updated April 2026."/>
+<style>
+:root{
+  --bg:#f0f4f8;--surface:#fff;--border:#dde5f0;--text:#1a2e4a;--muted:#6b82a0;
+  --accent:#2563eb;--accent-lt:#eff6ff;
+  --green:#16a34a;--green-lt:#dcfce7;
+  --amber:#d97706;--amber-lt:#fef3c7;
+  --red:#dc2626;--red-lt:#fee2e2;
+  --blue-lt:#dbeafe;
+  --purple:#7c3aed;--purple-lt:#ede9fe;
+  --teal:#0d9488;--teal-lt:#ccfbf1;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px}
+
+/* ── HEADER ── */
+.header{background:#1a2e4a;color:#fff;padding:10px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50;box-shadow:0 2px 10px rgba(0,0,0,0.2)}
+.logo-wrap{display:flex;align-items:center;gap:10px}
+.logo-text{font-weight:800;font-size:1.15rem;letter-spacing:-0.02em;color:#fff}
+.logo-text span{color:#60a5fa}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.updated-badge{font-size:0.72rem;color:rgba(255,255,255,0.5);white-space:nowrap}
+.header-search{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.1);border-radius:8px;padding:0 12px;height:36px;width:240px}
+.header-search input{background:none;border:none;outline:none;color:#fff;font-size:0.88rem;width:100%}
+.header-search input::placeholder{color:rgba(255,255,255,0.4)}
+
+/* ── TABS ── */
+.tabs{display:flex;background:var(--surface);border-bottom:2px solid var(--border);position:sticky;top:57px;z-index:40;overflow-x:auto;scrollbar-width:none;padding:0 24px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:12px 16px;font-size:0.85rem;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:color .15s}
+.tab:hover{color:var(--text)}
+.tab.active{font-weight:700;border-bottom-color:currentColor}
+.tab[data-cat="all"].active     {color:#1a2e4a}
+.tab[data-cat="test-policy"].active   {color:var(--red)}
+.tab[data-cat="deadlines"].active     {color:var(--accent)}
+.tab[data-cat="financial-aid"].active {color:var(--green)}
+.tab[data-cat="trends"].active        {color:var(--purple)}
+.tab[data-cat="workforce"].active     {color:var(--teal)}
+
+/* ── CONTENT ── */
+.pane{display:none;padding:24px;max-width:1100px;margin:0 auto}
+.pane.active{display:block}
+
+/* ── SOURCE CHIPS ── */
+.src-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.schip{padding:4px 13px;border-radius:20px;font-size:0.75rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);transition:all .15s;white-space:nowrap}
+.schip.active{border-color:var(--accent);background:var(--accent-lt);color:var(--accent)}
+
+/* ── NEWS GRID ── */
+.news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.news-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;transition:box-shadow .15s,transform .12s}
+.news-card:hover{box-shadow:0 4px 18px rgba(0,0,0,0.09);transform:translateY(-2px)}
+.card-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.src-badge{font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+.new-badge{font-size:0.66rem;font-weight:700;padding:3px 9px;border-radius:20px;background:#fef3c7;color:#b45309;white-space:nowrap}
+.card-date{font-size:0.68rem;color:var(--muted);margin-left:auto;white-space:nowrap}
+.card-title{font-size:0.95rem;font-weight:700;line-height:1.4}
+.card-desc{font-size:0.83rem;color:var(--muted);line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;flex:1}
+.card-link{font-size:0.78rem;color:var(--accent);font-weight:600;margin-top:auto}
+
+.empty{text-align:center;padding:48px 20px;color:var(--muted);font-size:0.9rem}
+
+/* ── TRENDS ── */
+.trends-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:28px}
+.trend-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+.trend-label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px}
+.trend-num{font-size:1.75rem;font-weight:800;color:var(--text)}
+.trend-ctx{font-size:0.78rem;color:var(--muted);margin-top:5px;line-height:1.45}
+.trend-tag{display:inline-block;font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:8px}
+.t-up{background:var(--green-lt);color:var(--green)}
+.t-dn{background:var(--red-lt);color:var(--red)}
+.t-nt{background:var(--bg);color:var(--muted)}
+
+/* ── POLICY LOOKUP ── */
+.lookup-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
+.lookup-box h3{font-size:1rem;font-weight:700;margin-bottom:4px}
+.lookup-box p{font-size:0.83rem;color:var(--muted);margin-bottom:14px}
+.lookup-row{display:flex;gap:10px}
+.lookup-input{flex:1;padding:10px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:0.9rem;outline:none;color:var(--text);transition:border-color .2s}
+.lookup-input:focus{border-color:var(--accent)}
+.btn-lookup{background:#1a2e4a;color:#fff;border:none;border-radius:9px;padding:10px 20px;font-size:0.88rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .2s}
+.btn-lookup:hover{background:#243d5e}
+.quick-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.qchip{background:var(--accent-lt);color:var(--accent);border:1px solid #bfdbfe;border-radius:20px;padding:5px 14px;font-size:0.78rem;cursor:pointer;transition:background .12s}
+.qchip:hover{background:#dbeafe}
+
+.policy-results{display:flex;flex-direction:column;gap:12px}
+.policy-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.policy-hdr{background:#1a2e4a;color:#fff;padding:11px 16px;display:flex;justify-content:space-between;align-items:center}
+.policy-hdr h4{font-size:0.95rem;font-weight:700}
+.policy-hdr span{font-size:0.75rem;opacity:.65}
+.policy-body{padding:14px 16px;display:flex;flex-direction:column;gap:11px}
+.prow{display:flex;gap:12px;align-items:flex-start}
+.plabel{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);min-width:105px;padding-top:3px;flex-shrink:0}
+.pval{font-size:0.86rem;color:var(--text);flex:1}
+.policy-foot{font-size:0.7rem;color:var(--muted);padding:6px 16px 12px}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:600}
+.b-req{background:var(--red-lt);color:var(--red)}
+.b-opt{background:var(--amber-lt);color:var(--amber)}
+.b-free{background:var(--green-lt);color:var(--green)}
+.b-flex{background:var(--blue-lt);color:var(--accent)}
+.dpills{display:flex;gap:7px;flex-wrap:wrap;margin-top:4px}
+.dpill{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:3px 11px;font-size:0.8rem}
+.dpill b{color:var(--accent)}
+
+.section-title{font-size:0.73rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:22px 0 10px}
+
+/* ── FOOTER ── */
+footer{text-align:center;padding:32px 20px;font-size:0.75rem;color:var(--muted);border-top:1px solid var(--border);margin-top:40px}
+footer a{color:var(--accent);text-decoration:none}
+
+@media(max-width:600px){
+  .header{padding:8px 14px}
+  .pane{padding:14px}
+  .header-search{width:160px}
+  .news-grid{grid-template-columns:1fr}
+  .trends-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo-wrap">
+    <svg width="38" height="38" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <g fill="#f97316">
+        <polygon points="50,2 54,18 46,18"/>
+        <polygon points="50,82 54,98 46,98"/>
+        <polygon points="2,50 18,54 18,46"/>
+        <polygon points="82,50 98,54 98,46"/>
+        <polygon points="15,15 26,27 20,32"/>
+        <polygon points="85,15 80,28 74,23"/>
+        <polygon points="15,85 20,72 26,77"/>
+        <polygon points="85,85 74,77 80,72"/>
+      </g>
+      <circle cx="50" cy="50" r="30" fill="#fb923c"/>
+      <circle cx="50" cy="50" r="27" fill="#fdba74"/>
+      <path d="M38,58 Q50,70 62,58" stroke="#c2410c" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <rect x="30" y="43" width="16" height="11" rx="5" fill="#1e1b18"/>
+      <rect x="54" y="43" width="16" height="11" rx="5" fill="#1e1b18"/>
+      <line x1="46" y1="48" x2="54" y2="48" stroke="#1e1b18" stroke-width="2.5"/>
+      <line x1="32" y1="46" x2="38" y2="52" stroke="white" stroke-width="2" opacity="0.5" stroke-linecap="round"/>
+      <line x1="56" y1="46" x2="62" y2="52" stroke="white" stroke-width="2" opacity="0.5" stroke-linecap="round"/>
+      <rect x="28" y="22" width="44" height="6" rx="2" fill="#1d4ed8" transform="rotate(-3,50,25)"/>
+      <rect x="38" y="14" width="24" height="12" rx="3" fill="#1d4ed8" transform="rotate(-3,50,20)"/>
+      <line x1="72" y1="24" x2="76" y2="35" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="76" cy="36" r="2.5" fill="#fbbf24"/>
+    </svg>
+    <div class="logo-text">Shining<span>U</span></div>
+  </div>
+  <div class="header-right">
+    <span class="updated-badge">Updated Apr 24, 2026</span>
+    <div class="header-search">
+      <span style="opacity:.5">🔍</span>
+      <input type="text" id="globalSearch" placeholder="Search…" oninput="renderActive()"/>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" data-cat="all"           onclick="setTab(this)">All</button>
+  <button class="tab"        data-cat="test-policy"   onclick="setTab(this)">📝 Test Policy</button>
+  <button class="tab"        data-cat="deadlines"     onclick="setTab(this)">📅 Deadlines</button>
+  <button class="tab"        data-cat="financial-aid" onclick="setTab(this)">💰 Financial Aid</button>
+  <button class="tab"        data-cat="trends"        onclick="setTab(this)">📈 Trends</button>
+  <button class="tab"        data-cat="workforce"     onclick="setTab(this)">💼 Workforce</button>
+</div>
+
+<!-- ALL -->
+<div class="pane active" id="pane-all">
+  <div class="src-row" id="srcRow-all"></div>
+  <div class="news-grid" id="list-all"></div>
+</div>
+
+<!-- TEST POLICY -->
+<div class="pane" id="pane-test-policy">
+  <div class="lookup-box">
+    <h3>🏫 School Policy Lookup</h3>
+    <p>Search any school to see its current test policy and application deadlines.</p>
+    <div class="lookup-row">
+      <input class="lookup-input" id="policyInput" placeholder="e.g. MIT, Harvard, UCLA, UMich…" onkeydown="if(event.key==='Enter')doLookup()"/>
+      <button class="btn-lookup" onclick="doLookup()">Look up</button>
+    </div>
+    <div class="quick-chips">
+      <span class="qchip" onclick="quickLookup('MIT')">MIT</span>
+      <span class="qchip" onclick="quickLookup('Harvard')">Harvard</span>
+      <span class="qchip" onclick="quickLookup('Stanford')">Stanford</span>
+      <span class="qchip" onclick="quickLookup('Yale')">Yale</span>
+      <span class="qchip" onclick="quickLookup('Cornell')">Cornell</span>
+      <span class="qchip" onclick="quickLookup('UCLA')">UCLA</span>
+      <span class="qchip" onclick="quickLookup('Princeton')">Princeton</span>
+      <span class="qchip" onclick="quickLookup('UMich')">UMich</span>
+      <span class="qchip" onclick="quickLookup('Ohio State')">Ohio State</span>
+    </div>
+  </div>
+  <div class="policy-results" id="policyResults"></div>
+  <div class="section-title">Latest Test Policy News</div>
+  <div class="src-row" id="srcRow-test-policy"></div>
+  <div class="news-grid" id="list-test-policy"></div>
+</div>
+
+<!-- DEADLINES -->
+<div class="pane" id="pane-deadlines">
+  <div class="src-row" id="srcRow-deadlines"></div>
+  <div class="news-grid" id="list-deadlines"></div>
+</div>
+
+<!-- FINANCIAL AID -->
+<div class="pane" id="pane-financial-aid">
+  <div class="src-row" id="srcRow-financial-aid"></div>
+  <div class="news-grid" id="list-financial-aid"></div>
+</div>
+
+<!-- TRENDS -->
+<div class="pane" id="pane-trends">
+  <div class="trends-grid">
+    <div class="trend-card"><div class="trend-label">Ivies Requiring Tests</div><div class="trend-num">6 of 8</div><div class="trend-ctx">Six Ivy League schools now require SAT/ACT for Fall 2027 applicants, up from 4 last cycle.</div><span class="trend-tag t-up">↑ Major shift in 2026</span></div>
+    <div class="trend-card"><div class="trend-label">FAFSA Submissions</div><div class="trend-num">2M+</div><div class="trend-ctx">2026–27 FAFSA hit 2M submissions at its earliest milestone ever — first on-time launch in 3 years.</div><span class="trend-tag t-up">↑ Strong recovery</span></div>
+    <div class="trend-card"><div class="trend-label">ED/EA Class Fill Rate</div><div class="trend-num">&gt;70%</div><div class="trend-ctx">Many selective colleges now fill over 70% of their class through Early Action and Early Decision.</div><span class="trend-tag t-up">↑ Apply early or risk it</span></div>
+    <div class="trend-card"><div class="trend-label">FAFSA Questions</div><div class="trend-num">~35</div><div class="trend-ctx">New simplified FAFSA cut from 100+ questions to ~35, reducing errors and completion time.</div><span class="trend-tag t-up">↑ Much easier</span></div>
+    <div class="trend-card"><div class="trend-label">AI Essay Detection</div><div class="trend-num">↑ Rising</div><div class="trend-ctx">UVA, UC system, BYU and others now use AI detection tools on application essays in 2026.</div><span class="trend-tag t-nt">New risk for applicants</span></div>
+    <div class="trend-card"><div class="trend-label">Legacy Preferences</div><div class="trend-num">Banned</div><div class="trend-ctx">California's ban fully in effect — Stanford, USC can no longer favor alumni children.</div><span class="trend-tag t-dn">↓ Major policy shift</span></div>
+    <div class="trend-card"><div class="trend-label">Test-Optional Schools</div><div class="trend-num">~60%</div><div class="trend-ctx">Share of top-100 schools remaining test-optional declined as major universities reinstate requirements.</div><span class="trend-tag t-dn">↓ From ~80% in 2024</span></div>
+    <div class="trend-card"><div class="trend-label">Early App Surge</div><div class="trend-num">+</div><div class="trend-ctx">Duke, Emory, UVA, and UGA all reported significant increases in early applications for Fall 2026.</div><span class="trend-tag t-up">↑ Biggest ED surge yet</span></div>
+  </div>
+  <div class="section-title">Latest Trend News</div>
+  <div class="src-row" id="srcRow-trends"></div>
+  <div class="news-grid" id="list-trends"></div>
+</div>
+
+<!-- WORKFORCE -->
+<div class="pane" id="pane-workforce">
+  <div class="src-row" id="srcRow-workforce"></div>
+  <div class="news-grid" id="list-workforce"></div>
+</div>
+
+<footer>
+  ShiningU · College Admissions Intelligence · Data sourced from US News, Common App, College Confidential, Dept. of Education, FAFSA, and BLS ·
+  Always verify policies on each school's official admissions website.
+</footer>
+
+<script>
+const SOURCES_META = {
+  usnews:   {label:'US News',      bg:'#dbeafe',color:'#1e40af'},
+  commonapp:{label:'Common App',   bg:'#d1fae5',color:'#065f46'},
+  cconf:    {label:'Coll. Conf',   bg:'#fef3c7',color:'#92400e'},
+  doed:     {label:'Dept. Ed',     bg:'#ede9fe',color:'#4c1d95'},
+  fafsa:    {label:'FAFSA/FSA',    bg:'#ffe4e6',color:'#9f1239'},
+  bls:      {label:'Labor/BLS',    bg:'#fef9c3',color:'#78350f'},
+  ivycoach: {label:'Ivy Coach',    bg:'#f0fdf4',color:'#166534'},
+  acceptu:  {label:'AcceptU',      bg:'#faf5ff',color:'#6d28d9'},
+  bestcol:  {label:'BestColleges', bg:'#fff7ed',color:'#c2410c'},
+  nasfaa:   {label:'NASFAA',       bg:'#ecfdf5',color:'#065f46'},
+};
+
+const NEWS = [
+  // TEST POLICY
+  {source:'acceptu', isNew:true,  title:'6 of 8 Ivy League Schools Now Require SAT/ACT for Fall 2027', desc:'Harvard, Dartmouth, Brown, Cornell, Stanford, and UPenn have all moved back to requiring standardized test scores. Princeton has announced testing will be required for students entering Fall 2027.', category:'test-policy', date:'Apr 2026', url:'https://www.acceptu.com/blog/whats-really-changing-in-college-admissions-in-2026/'},
+  {source:'acceptu', isNew:true,  title:'Stanford Reinstates SAT/ACT Requirement Starting Fall 2026', desc:"Beginning with the 2025–26 application cycle, Stanford requires SAT or ACT scores for all first-year and transfer students. This marks a significant reversal of the school's pandemic-era test-optional policy.", category:'test-policy', date:'Apr 2026', url:'https://www.acceptu.com/blog/the-12-college-admissions-trend-for-2026/'},
+  {source:'acceptu', isNew:true,  title:'Cornell Requires SAT/ACT for All First-Year Applicants from Fall 2026', desc:'Effective for Fall 2026, Cornell first-year applicants must submit SAT or ACT scores. The university joins a growing list of elite schools reinstating standardized testing requirements.', category:'test-policy', date:'Apr 2026', url:'https://www.thecollegesage.com/blog/2025/6/10/the-return-of-test-requirements-colleges-that-now-require-sat-or-act-scores'},
+  {source:'bestcol', isNew:true,  title:'Ohio State Reinstates ACT/SAT Requirement for 2026 Admissions Cycle', desc:'Ohio State joins the growing list of major public universities reinstating standardized test requirements for new first-year undergraduate applicants to its Columbus campus.', category:'test-policy', date:'Apr 2026', url:'https://blog.collegevine.com/colleges-requiring-sat-act'},
+  {source:'usnews',  isNew:true,  title:'Why Top Colleges Are Reversing Test-Optional Policies in 2026', desc:'Grade inflation is driving the reversal — SAT and ACT scores have returned as one of the few consistent signals colleges use to verify academic strength.', category:'test-policy', date:'Apr 2026', url:'https://www.carnegieprep.com/college-admissions/college-admissions-testing-policy-updates/'},
+  {source:'usnews',  isNew:false, title:'UC System Remains Test-Blind for All Campuses in 2026', desc:'All University of California campuses continue to be test-blind — SAT/ACT scores are not reviewed at all in the admissions process — making them a standout exception to the national trend.', category:'test-policy', date:'Mar 2026', url:'https://scholarshipsandgrants.us/high-school-seniors/colleges-that-dont-require-sat-or-act-in-the-us/'},
+
+  // DEADLINES
+  {source:'ivycoach', isNew:true, title:'Early Application Surge: 70%+ of Class Now Filled Through ED/EA at Top Schools', desc:'Duke, Emory, the University of Virginia, and the University of Georgia all reported significant increases in early applications for Fall 2026. Many selective colleges now fill over 70% of their class through early rounds.', category:'deadlines', date:'Apr 2026', url:'https://www.collegematchpoint.com/early-application-surge-what-the-fall-2026-admissions-trends-reveal'},
+  {source:'ivycoach', isNew:true, title:'College Application Timeline for 2026–27 Cycle: Key Dates', desc:'Applications for fall 2027 open in August 2026. Most Early Decision and Early Action deadlines fall November 1. ED II deadlines are typically in January, offering a second binding-commitment option.', category:'deadlines', date:'Apr 2026', url:'https://www.ivywise.com/blog/college-application-deadlines/'},
+  {source:'cconf',    isNew:true, title:'Waitlist Activity Spring 2026: Movement Reported at Several Top Schools', desc:'Community tracking on College Confidential shows waitlist movement beginning at selective schools. Applicants are advised to send letters of continued interest promptly after being waitlisted.', category:'deadlines', date:'Apr 2026', url:'https://www.collegeconfidential.com'},
+  {source:'acceptu',  isNew:true, title:'The College Admissions Timeline Has Shifted — Apply Earlier Than Ever', desc:"Consultants warn that the window for strong applications is narrowing. With more than 70% of selective-school classes filled by December, students who wait for Regular Decision are increasingly at a structural disadvantage.", category:'deadlines', date:'Apr 2026', url:'https://www.acceptu.com/blog/college-admissions-trends-2026/'},
+
+  // FINANCIAL AID
+  {source:'fafsa',  isNew:true,  title:'2026–27 FAFSA Launches On Time — First In Three Years', desc:'Federal Student Aid launched the 2026–27 FAFSA before its October 1 deadline, marking the first on-time launch in three years. The form hit 2 million submissions at the earliest milestone ever recorded.', category:'financial-aid', date:'Apr 2026', url:'https://www.edvisors.com/blog/2026-2027-fafsa/'},
+  {source:'fafsa',  isNew:true,  title:'New FAFSA Slashed from 100+ Questions to Just ~35', desc:'The redesigned FAFSA has been cut from more than 100 questions down to approximately 35, reducing completion time and the chance of errors. Most applicants will now see immediate processing confirmation.', category:'financial-aid', date:'Apr 2026', url:'https://www.bestcolleges.com/news/fafsa-updates-what-students-need-to-know-federal-financial-aid/'},
+  {source:'nasfaa', isNew:true,  title:'Big Changes Coming to Federal Financial Aid in 2026 — What to Expect', desc:'NASFAA outlines major structural changes to federal aid programs in 2026, including new adaptive fraud detection for FAFSA submissions and expected reductions in verification volume.', category:'financial-aid', date:'Apr 2026', url:'https://www.nasfaa.org/news-item/37968/Big_Changes_Coming_to_Federal_Financial_Aid_in_2026_Here_s_What_to_Expect'},
+  {source:'doed',   isNew:true,  title:'2026–27 FAFSA Specifications Guide Updated — April 2026', desc:'The Department of Education released the April 2026 update to the FAFSA Specifications Guide for the 2026–27 award year, with clarifications on SAI calculation and institutional data sharing.', category:'financial-aid', date:'Apr 2026', url:'https://fsapartners.ed.gov/knowledge-center/library/handbooks-manuals-or-guides/2025-02-26/2026-27-fafsa-specifications-guide-april-2026-update'},
+  {source:'fafsa',  isNew:false, title:'State FAFSA Deadlines: Priority Windows Closed in April 2026', desc:"West Virginia's WV Invests Grant required submission by April 15. Arizona's priority deadline was April 1. Students who missed these windows may still qualify for aid but could receive reduced awards.", category:'financial-aid', date:'Apr 2026', url:'https://www.fastweb.com/financial-aid/articles/financial-aid-and-fafsa-state-deadlines'},
+
+  // TRENDS
+  {source:'acceptu', isNew:true,  title:'AI Essay Detection Now Used at UVA, UC System, BYU, and More', desc:'Colleges are now deploying AI tools to detect AI-generated content in application essays. Essays that are specific, slightly imperfect, and clearly personal are standing out more than ever.', category:'trends', date:'Apr 2026', url:'https://www.acceptu.com/blog/whats-really-changing-in-college-admissions-in-2026/'},
+  {source:'usnews',  isNew:true,  title:"California's Legacy Preference Ban Now Fully in Effect for 2026 Cycle", desc:"California's ban on legacy preferences in college admissions is fully in place. Stanford and USC are reviewing applicants without giving any advantage to alumni children for the first time.", category:'trends', date:'Apr 2026', url:'https://www.acceptu.com/blog/the-12-college-admissions-trend-for-2026/'},
+  {source:'cconf',   isNew:true,  title:'Admissions Officers Increasingly Skeptical of "Resume-Padding" Activity Lists', desc:'Admissions officers at selective colleges report growing skepticism toward activity lists that look impressive but lack substance. One genuine project can carry more weight than five vague titles.', category:'trends', date:'Apr 2026', url:'https://www.saraharberson.com/blog/challenging-trends-facing-the-class-of-2026'},
+  {source:'acceptu', isNew:true,  title:'12 College Admissions Trends Shaping 2026', desc:"AcceptU's annual trend report highlights: the return of test requirements, the AI essay arms race, the ED surge, growing international competition, and the end of legacy admissions at California schools.", category:'trends', date:'Apr 2026', url:'https://www.acceptu.com/blog/the-12-college-admissions-trend-for-2026/'},
+
+  // WORKFORCE
+  {source:'bls',    isNew:false, title:'BLS Occupational Outlook 2024–34: Fastest-Growing Degree Jobs', desc:"Bureau of Labor Statistics projections show software developers, nurse practitioners, and data scientists leading decade-long growth for bachelor's degree holders. Healthcare and tech continue to dominate.", category:'workforce', date:'Mar 2026', url:'https://www.bls.gov/ooh/'},
+  {source:'usnews', isNew:false, title:'College Degree Premium Remains Strong Despite Rising Tuition Concerns', desc:"Despite growing debate over college ROI, the wage premium for bachelor's degree holders versus high school graduates remains substantial, averaging 65–85% depending on field of study.", category:'workforce', date:'Feb 2026', url:'https://www.mcmillaneducation.com/blog/college-admissions-2025-trends-and-2026-predictions/'},
+];
+
+const SCHOOLS = [
+  {name:'Massachusetts Institute of Technology',aliases:['mit'],location:'Cambridge, MA',testPolicy:'required',testNote:'SAT or ACT required.',deadlines:{EA:'Nov 1',RD:'Jan 1'},updated:'Apr 2026'},
+  {name:'Harvard University',aliases:['harvard'],location:'Cambridge, MA',testPolicy:'required',testNote:'SAT or ACT required for Class of 2030.',deadlines:{EA:'Nov 1',RD:'Jan 1'},updated:'Apr 2026'},
+  {name:'Stanford University',aliases:['stanford'],location:'Stanford, CA',testPolicy:'required',testNote:'SAT or ACT required starting Fall 2026 entry.',deadlines:{EA:'Nov 1',RD:'Jan 2'},updated:'Apr 2026'},
+  {name:'Yale University',aliases:['yale'],location:'New Haven, CT',testPolicy:'required',testNote:'SAT or ACT required.',deadlines:{ED:'Nov 1',RD:'Jan 2'},updated:'Apr 2026'},
+  {name:'Princeton University',aliases:['princeton'],location:'Princeton, NJ',testPolicy:'required',testNote:'SAT or ACT required. Announced for Fall 2027 entry.',deadlines:{ED:'Nov 1',RD:'Jan 1'},updated:'Apr 2026'},
+  {name:'Columbia University',aliases:['columbia'],location:'New York, NY',testPolicy:'optional',testNote:'Test-optional through 2025–26.',deadlines:{ED:'Nov 1',RD:'Jan 1'},updated:'Apr 2026'},
+  {name:'University of Pennsylvania',aliases:['upenn','penn'],location:'Philadelphia, PA',testPolicy:'required',testNote:'SAT or ACT required as of 2026.',deadlines:{ED:'Nov 1',RD:'Jan 5'},updated:'Apr 2026'},
+  {name:'Brown University',aliases:['brown'],location:'Providence, RI',testPolicy:'required',testNote:'SAT or ACT required as of 2026.',deadlines:{ED:'Nov 1',RD:'Jan 5'},updated:'Apr 2026'},
+  {name:'Dartmouth College',aliases:['dartmouth'],location:'Hanover, NH',testPolicy:'required',testNote:'SAT or ACT required.',deadlines:{ED:'Nov 1',RD:'Jan 2'},updated:'Apr 2026'},
+  {name:'Cornell University',aliases:['cornell'],location:'Ithaca, NY',testPolicy:'required',testNote:'SAT or ACT required for all first-year applicants from Fall 2026.',deadlines:{ED:'Nov 1',RD:'Jan 2'},updated:'Apr 2026'},
+  {name:'Duke University',aliases:['duke'],location:'Durham, NC',testPolicy:'optional',testNote:'Test-optional. Strong scores can help.',deadlines:{ED:'Nov 1',RD:'Jan 2'},updated:'Apr 2026'},
+  {name:'Northwestern University',aliases:['northwestern','nu'],location:'Evanston, IL',testPolicy:'optional',testNote:'Test-optional for 2025–26.',deadlines:{ED:'Nov 1',RD:'Jan 1'},updated:'Apr 2026'},
+  {name:'Johns Hopkins University',aliases:['johns hopkins','jhu','hopkins'],location:'Baltimore, MD',testPolicy:'required',testNote:'SAT or ACT required as of 2026.',deadlines:{ED:'Nov 1',RD:'Jan 2'},updated:'Apr 2026'},
+  {name:'University of Chicago',aliases:['uchicago','u of c'],location:'Chicago, IL',testPolicy:'optional',testNote:'Test-optional.',deadlines:{ED:'Nov 1',RD:'Jan 2'},updated:'Apr 2026'},
+  {name:'Carnegie Mellon University',aliases:['cmu','carnegie mellon'],location:'Pittsburgh, PA',testPolicy:'optional',testNote:'Test-optional for most programs.',deadlines:{ED:'Nov 1',RD:'Jan 1'},updated:'Apr 2026'},
+  {name:'University of California Los Angeles',aliases:['ucla'],location:'Los Angeles, CA',testPolicy:'free',testNote:'Test-blind. UC system does not review SAT/ACT scores.',deadlines:{RD:'Nov 30'},updated:'Apr 2026'},
+  {name:'University of California Berkeley',aliases:['uc berkeley','berkeley','cal','ucb'],location:'Berkeley, CA',testPolicy:'free',testNote:'Test-blind. Scores not reviewed in admissions.',deadlines:{RD:'Nov 30'},updated:'Apr 2026'},
+  {name:'University of Michigan',aliases:['umich','u of m','michigan'],location:'Ann Arbor, MI',testPolicy:'optional',testNote:'Test-optional. Applicants may submit or withhold.',deadlines:{ED:'Nov 1',RD:'Feb 1'},updated:'Apr 2026'},
+  {name:'Ohio State University',aliases:['ohio state','osu'],location:'Columbus, OH',testPolicy:'required',testNote:'ACT/SAT required for new first-year applicants from 2026 cycle.',deadlines:{ED:'Nov 1',RD:'Feb 1'},updated:'Apr 2026'},
+  {name:'University of Virginia',aliases:['uva','virginia'],location:'Charlottesville, VA',testPolicy:'optional',testNote:'Test-optional.',deadlines:{ED:'Nov 1',RD:'Jan 1'},updated:'Apr 2026'},
+  {name:'Georgetown University',aliases:['georgetown'],location:'Washington, D.C.',testPolicy:'optional',testNote:'Test-optional.',deadlines:{EA:'Nov 1',RD:'Jan 10'},updated:'Apr 2026'},
+  {name:'New York University',aliases:['nyu'],location:'New York, NY',testPolicy:'optional',testNote:'Test-optional for domestic applicants.',deadlines:{ED:'Nov 1',RD:'Jan 1'},updated:'Apr 2026'},
+  {name:'University of Southern California',aliases:['usc'],location:'Los Angeles, CA',testPolicy:'optional',testNote:'Test-optional.',deadlines:{EA:'Nov 1',RD:'Jan 15'},updated:'Apr 2026'},
+  {name:'Vanderbilt University',aliases:['vanderbilt'],location:'Nashville, TN',testPolicy:'optional',testNote:'Test-optional.',deadlines:{ED:'Nov 1',RD:'Jan 1'},updated:'Apr 2026'},
+  {name:'Rice University',aliases:['rice'],location:'Houston, TX',testPolicy:'optional',testNote:'Test-optional.',deadlines:{ED:'Nov 1',RD:'Jan 4'},updated:'Apr 2026'},
+  {name:'Notre Dame University',aliases:['notre dame','nd'],location:'Notre Dame, IN',testPolicy:'optional',testNote:'Test-optional.',deadlines:{ED:'Nov 1',EA:'Nov 1',RD:'Jan 1'},updated:'Apr 2026'},
+  {name:'Emory University',aliases:['emory'],location:'Atlanta, GA',testPolicy:'optional',testNote:'Test-optional.',deadlines:{ED:'Nov 1',RD:'Jan 1'},updated:'Apr 2026'},
+  {name:'Tufts University',aliases:['tufts'],location:'Medford, MA',testPolicy:'optional',testNote:'Test-optional.',deadlines:{ED:'Nov 1',RD:'Jan 1'},updated:'Apr 2026'},
+  {name:'Boston University',aliases:['bu','boston university'],location:'Boston, MA',testPolicy:'optional',testNote:'Test-optional.',deadlines:{ED:'Nov 1',RD:'Jan 2'},updated:'Apr 2026'},
+];
+
+const CATS = ['all','test-policy','deadlines','financial-aid','trends','workforce'];
+let srcFilters = {};
+CATS.forEach(c => srcFilters[c] = 'all');
+let activeTab = 'all';
+
+function setTab(el) {
+  const cat = el.dataset.cat;
+  activeTab = cat;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  document.getElementById('pane-' + cat).classList.add('active');
+}
+
+function buildSrcChips(cat) {
+  const row = document.getElementById('srcRow-' + cat);
+  if (!row) return;
+  const catNews = cat === 'all' ? NEWS : NEWS.filter(n => n.category === cat);
+  const usedSrcs = [...new Set(catNews.map(n => n.source))];
+  row.innerHTML = ['all', ...usedSrcs].map(s => {
+    const meta = SOURCES_META[s];
+    const label = s === 'all' ? 'All Sources' : (meta ? meta.label : s);
+    return `<span class="schip ${srcFilters[cat]===s?'active':''}" onclick="setSrc('${cat}','${s}',this)">${label}</span>`;
+  }).join('');
+}
+
+function setSrc(cat, src, el) {
+  srcFilters[cat] = src;
+  document.getElementById('srcRow-' + cat).querySelectorAll('.schip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderList(cat);
+}
+
+function renderList(cat) {
+  const el = document.getElementById('list-' + cat);
+  if (!el) return;
+  const q = (document.getElementById('globalSearch').value || '').toLowerCase().trim();
+  let items = cat === 'all' ? NEWS : NEWS.filter(n => n.category === cat);
+  if (srcFilters[cat] !== 'all') items = items.filter(n => n.source === srcFilters[cat]);
+  if (q) items = items.filter(n => (n.title + n.desc).toLowerCase().includes(q));
+  if (!items.length) { el.innerHTML = '<div class="empty">No results for your filters.</div>'; return; }
+  el.innerHTML = items.map(n => {
+    const s = SOURCES_META[n.source] || {label:n.source,bg:'#f0f4f8',color:'#1a2e4a'};
+    return `<a class="news-card" href="${n.url}" target="_blank" rel="noopener">
+      <div class="card-meta">
+        <span class="src-badge" style="background:${s.bg};color:${s.color}">${s.label}</span>
+        ${n.isNew ? '<span class="new-badge">🆕 New</span>' : ''}
+        <span class="card-date">${n.date}</span>
+      </div>
+      <div class="card-title">${n.title}</div>
+      <div class="card-desc">${n.desc}</div>
+      <span class="card-link">Read more →</span>
+    </a>`;
+  }).join('');
+}
+
+function renderActive() { renderList(activeTab); }
+
+function doLookup() {
+  const q = document.getElementById('policyInput').value.toLowerCase().trim();
+  const results = SCHOOLS.filter(s =>
+    s.name.toLowerCase().includes(q) || s.aliases.some(a => a.includes(q) || q.includes(a))
+  );
+  const el = document.getElementById('policyResults');
+  if (!results.length) { el.innerHTML = `<div class="empty">No match for "${q}". Try an abbreviation like "MIT" or "UCB".</div>`; return; }
+  const bMap = {required:'b-req',optional:'b-opt',free:'b-free',flexible:'b-flex'};
+  const lMap = {required:'Test Required',optional:'Test Optional',free:'Test Blind',flexible:'Test Flexible'};
+  el.innerHTML = results.slice(0,5).map(s => {
+    const pills = Object.entries(s.deadlines).map(([k,v]) => `<div class="dpill"><b>${k}:</b> ${v}</div>`).join('');
+    return `<div class="policy-card">
+      <div class="policy-hdr"><h4>${s.name}</h4><span>${s.location}</span></div>
+      <div class="policy-body">
+        <div class="prow"><span class="plabel">Test Policy</span><span class="pval">
+          <span class="badge ${bMap[s.testPolicy]}">${lMap[s.testPolicy]}</span>
+          <span style="margin-left:10px;font-size:0.8rem;color:var(--muted)">${s.testNote}</span>
+        </span></div>
+        <div class="prow"><span class="plabel">Deadlines</span><span class="pval"><div class="dpills">${pills}</div></span></div>
+      </div>
+      <div class="policy-foot">Last verified: ${s.updated} · Always confirm on the school's official admissions page.</div>
+    </div>`;
+  }).join('');
+}
+
+function quickLookup(name) {
+  document.getElementById('policyInput').value = name;
+  doLookup();
+}
+
+CATS.forEach(cat => { buildSrcChips(cat); renderList(cat); });
+</script>
+</body>
+</html>
