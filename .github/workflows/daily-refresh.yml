@@ -39,6 +39,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git stash
+          git pull origin main
+          git stash pop
           git add index.html
           git diff --cached --quiet || git commit -m "chore: daily news refresh $(date -u '+%Y-%m-%d')"
           git push origin main
