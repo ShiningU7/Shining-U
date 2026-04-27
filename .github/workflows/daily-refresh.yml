@@ -1,6 +1,6 @@
 name: Daily News Refresh
  
-on:
+"on":
   schedule:
     # Runs every day at 7:00 AM UTC (3:00 AM ET / 12:00 AM PT)
     - cron: '0 7 * * *'
