@@ -4,18 +4,18 @@ update_news.py — ShiningU Daily News Refresher
 Fetches RSS feeds from US News, Common App, Dept of Education,
 Federal Student Aid, BLS, and College Confidential.
 Rewrites the NEWS array inside index.html with fresh articles.
- 
+
 Run manually:   python update_news.py
 Run via GitHub Actions: triggered automatically daily at 7am UTC
 """
- 
+
 import re
 import json
 import signal
 import sys
 from datetime import datetime
 from pathlib import Path
- 
+
 try:
     import feedparser
     import requests
@@ -24,10 +24,10 @@ except ImportError:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "feedparser", "requests"])
     import feedparser
     import requests
- 
+
 # ── TIMEOUT HELPER ────────────────────────────────────────────────────────────
 FEED_TIMEOUT = 15  # seconds per feed
- 
+
 # ── SOURCES ───────────────────────────────────────────────────────────────────
 FEEDS = [
     {
@@ -106,7 +106,7 @@ FEEDS = [
         }
     },
 ]
- 
+
 CURATED_FALLBACK = [
     {"source":"usnews","isNew":True,"title":"Harvard Reinstates SAT/ACT Requirement for Class of 2030","desc":"Harvard joins a growing list of elite universities returning to standardized testing requirements, citing research showing test scores improve prediction of college success for low-income applicants.","category":"test-policy","date":"Apr 2026","url":"https://www.usnews.com/education/best-colleges"},
     {"source":"commonapp","isNew":True,"title":"Common App Reports Record 7.1 Million Applications for 2025–26","desc":"The Common Application reports a record-breaking cycle with international applications up 14% and first-generation applicants up 9%.","category":"trends","date":"Apr 2026","url":"https://www.commonapp.org/blog"},
@@ -114,16 +114,16 @@ CURATED_FALLBACK = [
     {"source":"bls","isNew":True,"title":"BLS: Bachelor's Degree Holders Earn 87% More Than High School Graduates","desc":"The latest Bureau of Labor Statistics data shows the college wage premium has grown to 87%, up from 84% in 2025, reinforcing the economic value of higher education.","category":"workforce","date":"Apr 2026","url":"https://www.bls.gov/ooh/"},
     {"source":"doed","isNew":True,"title":"Education Department Releases 2026 College Affordability Report","desc":"New federal data shows average net price at public 4-year institutions dropped 3% after grant aid, driven by expanded Pell Grant eligibility.","category":"financial-aid","date":"Apr 2026","url":"https://www.ed.gov/news-and-media/press-releases"},
 ]
- 
- 
+
+
 def categorize(text: str, cfg: dict) -> str:
     text_l = text.lower()
     for cat, kws in cfg.get("keywords", {}).items():
         if any(kw in text_l for kw in kws):
             return cat
     return cfg.get("category_default", "trends")
- 
- 
+
+
 def format_date(entry) -> str:
     for attr in ("published_parsed", "updated_parsed"):
         ts = getattr(entry, attr, None)
@@ -134,8 +134,8 @@ def format_date(entry) -> str:
             except Exception:
                 pass
     return datetime.now().strftime("%b %Y")
- 
- 
+
+
 def fetch_feed_with_timeout(cfg: dict) -> list:
     """Fetch a single feed with a hard timeout using requests + feedparser."""
     items = []
@@ -168,13 +168,13 @@ def fetch_feed_with_timeout(cfg: dict) -> list:
     except Exception as e:
         print(f"  ✗ Failed {cfg['label']}: {e}")
     return items
- 
- 
+
+
 def fetch_all() -> list:
     all_items = []
     for cfg in FEEDS:
         all_items.extend(fetch_feed_with_timeout(cfg))
- 
+
     # De-duplicate by title
     seen, deduped = set(), []
     for item in all_items:
@@ -182,29 +182,29 @@ def fetch_all() -> list:
         if key not in seen:
             seen.add(key)
             deduped.append(item)
- 
+
     if not deduped:
         print("All feeds failed — using fallback data.")
         return CURATED_FALLBACK
- 
+
     print(f"Total: {len(deduped)} unique items fetched.")
     return deduped
- 
- 
+
+
 def update_html(items: list, html_path: Path):
     content = html_path.read_text(encoding="utf-8")
- 
+
     # Build new NEWS array as JS
-    news_js = "const NEWS = " + json.dumps(items, indent=2, ensure_ascii=False) + ";"
- 
+    news_js = "const NEWS = " + json.dumps(items, indent=2, ensure_ascii=False).replace("</", "<\\/") + ";"
+
     # Replace existing NEWS array
     pattern = r"const NEWS\s*=\s*\[[\s\S]*?\];"
     if not re.search(pattern, content):
         print("⚠️  Could not find NEWS array in index.html — no changes made.")
         return False
- 
+
     new_content = re.sub(pattern, news_js, content)
- 
+
     # Update last-refreshed timestamp
     now = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
     new_content = re.sub(
@@ -214,17 +214,17 @@ def update_html(items: list, html_path: Path):
     )
     if "Last auto-refreshed" not in new_content:
         new_content = new_content.replace("</head>", f"<!-- Last auto-refreshed: {now} -->\n</head>")
- 
+
     html_path.write_text(new_content, encoding="utf-8")
     print(f"✅ index.html updated with {len(items)} articles at {now}")
     return True
- 
- 
+
+
 if __name__ == "__main__":
     html_path = Path(__file__).parent / "index.html"
     if not html_path.exists():
         print(f"❌ index.html not found at {html_path}")
         exit(1)
- 
+
     items = fetch_all()
     update_html(items, html_path)
