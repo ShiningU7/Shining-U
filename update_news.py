@@ -32,7 +32,7 @@ FEED_TIMEOUT = 15  # seconds per feed
 FEEDS = [
     {
         "id": "usnews", "label": "US News",
-        "url": "https://www.usnews.com/rss/topics/id_00000155",
+        "url": "https://www.usnews.com/rss/education",
         "category_default": "trends",
         "keywords": {
             "test-policy": ["test", "sat", "act", "test-optional", "test optional", "test required"],
@@ -42,14 +42,14 @@ FEEDS = [
         }
     },
     {
-        "id": "commonapp", "label": "Common App",
-        "url": "https://www.commonapp.org/feed/",
-        "category_default": "deadlines",
+        "id": "insidehighered", "label": "Inside Higher Ed",
+        "url": "https://www.insidehighered.com/rss.xml",
+        "category_default": "trends",
         "keywords": {
-            "test-policy": ["test", "sat", "act", "score"],
-            "deadlines":   ["deadline", "open", "close", "apply", "essay", "prompt"],
-            "financial-aid": ["financial", "fee waiver", "aid"],
-            "trends":      ["trend", "record", "increase", "data", "report", "international"],
+            "test-policy": ["test", "sat", "act", "test-optional", "score", "standardized"],
+            "deadlines":   ["deadline", "early decision", "early action", "application", "enrollment"],
+            "financial-aid": ["financial aid", "scholarship", "grant", "tuition", "fafsa", "pell", "loan"],
+            "workforce":   ["job", "employment", "salary", "earnings", "career", "workforce"],
         }
     },
     {
@@ -65,7 +65,7 @@ FEEDS = [
     },
     {
         "id": "fafsa", "label": "FAFSA / FSA",
-        "url": "https://studentaid.gov/sites/default/files/feeds/news.xml",
+        "url": "https://fsapartners.ed.gov/knowledge-center/rss.xml",
         "category_default": "financial-aid",
         "keywords": {
             "financial-aid": ["fafsa", "aid", "loan", "grant", "repayment", "forgiveness", "pell", "sai"],
@@ -82,14 +82,27 @@ FEEDS = [
         }
     },
     {
-        "id": "cconf", "label": "College Confidential",
-        "url": "https://talk.collegeconfidential.com/c/college-admissions/l/latest.rss",
+        "id": "hechinger", "label": "Hechinger Report",
+        "url": "https://hechingerreport.org/feed/",
         "category_default": "trends",
         "keywords": {
-            "test-policy": ["sat", "act", "test", "score", "optional", "required"],
-            "deadlines":   ["deadline", "early decision", "ed", "ea", "waitlist", "decision"],
-            "financial-aid": ["financial aid", "scholarship", "merit", "aid", "fafsa"],
-            "trends":      ["trend", "acceptance", "rate", "common app", "ivy"],
+            "test-policy": ["sat", "act", "test", "score", "optional", "required", "standardized"],
+            "deadlines":   ["deadline", "early decision", "application", "waitlist"],
+            "financial-aid": ["financial aid", "scholarship", "tuition", "fafsa", "pell", "loan", "aid"],
+            "trends":      ["trend", "acceptance", "rate", "enrollment", "ivy", "college", "university"],
+            "workforce":   ["job", "employment", "salary", "career", "earnings"],
+        }
+    },
+    {
+        "id": "npr", "label": "NPR Education",
+        "url": "https://feeds.npr.org/1013/rss.xml",
+        "category_default": "trends",
+        "keywords": {
+            "test-policy": ["sat", "act", "test", "score", "optional", "standardized"],
+            "deadlines":   ["deadline", "early decision", "application", "admissions"],
+            "financial-aid": ["financial aid", "scholarship", "tuition", "fafsa", "pell", "student loan"],
+            "trends":      ["college", "university", "enrollment", "campus", "higher education"],
+            "workforce":   ["job", "employment", "salary", "career", "workforce"],
         }
     },
 ]
@@ -182,7 +195,7 @@ def update_html(items: list, html_path: Path):
     content = html_path.read_text(encoding="utf-8")
  
     # Build new NEWS array as JS
-    news_js = "const NEWS = " + json.dumps(items, indent=2, ensure_ascii=False).replace("</", "<\\/") + ";"
+    news_js = "const NEWS = " + json.dumps(items, indent=2, ensure_ascii=False) + ";"
  
     # Replace existing NEWS array
     pattern = r"const NEWS\s*=\s*\[[\s\S]*?\];"
