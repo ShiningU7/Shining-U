@@ -182,7 +182,7 @@ def update_html(items: list, html_path: Path):
     content = html_path.read_text(encoding="utf-8")
  
     # Build new NEWS array as JS
-    news_js = "const NEWS = " + json.dumps(items, indent=2, ensure_ascii=False) + ";"
+    news_js = "const NEWS = " + json.dumps(items, indent=2, ensure_ascii=False).replace("</", "<\\/") + ";"
  
     # Replace existing NEWS array
     pattern = r"const NEWS\s*=\s*\[[\s\S]*?\];"
