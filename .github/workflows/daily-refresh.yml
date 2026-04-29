@@ -10,6 +10,8 @@ env:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   refresh:
@@ -42,3 +44,6 @@ jobs:
           git add index.html
           git diff --cached --quiet || git commit -m "chore: daily news refresh $(date -u '+%Y-%m-%d')"
           git push --force-with-lease origin main
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
