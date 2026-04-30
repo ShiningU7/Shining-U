@@ -123,7 +123,6 @@ footer a{color:var(--accent);text-decoration:none}
   .trends-grid{grid-template-columns:1fr 1fr}
 }
 </style>
-<!-- Last auto-refreshed: 2026-04-29 12:07 UTC -->
 </head>
 <body>
 
@@ -262,524 +261,39 @@ const SOURCES_META = {
   nasfaa:   {label:'NASFAA',       bg:'#ecfdf5',color:'#065f46'},
 };
 
-const NEWS = [
-  {
-    "source": "usnews",
-    "isNew": true,
-    "title": "Q&A: New Center Opens to Prevent and Counter Antisemitism in Academia",
-    "desc": "Dr. Alan Kadish discusses the Touro University Antisemitism Institute, a first-of-its-kind initiative.",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.usnews.com/education/articles/q-and-a-touro-university-opens-antisemitism-institute"
-  },
-  {
-    "source": "usnews",
-    "isNew": true,
-    "title": "An AI Avatar Teaching College Students About AI",
-    "desc": "Higher ed expert Jeff Selingo shares his latest EdTech innovation rave.",
-    "category": "test-policy",
-    "date": "Apr 2026",
-    "url": "https://www.usnews.com/education/u-s-news-higher-ground/articles/2026-04-23/ai-avatar-college-teacher-students"
-  },
-  {
-    "source": "usnews",
-    "isNew": true,
-    "title": "Video Introductions Help Humanize the College Admissions Process",
-    "desc": "Video introductions help admissions officers understand applicants beyond transcripts and test scores.",
-    "category": "test-policy",
-    "date": "Apr 2026",
-    "url": "https://www.usnews.com/education/u-s-news-higher-ground/articles/2026-04-23/video-college-applications-brown-university"
-  },
-  {
-    "source": "usnews",
-    "isNew": true,
-    "title": "Flexible Adult Education Through a College Summer Program",
-    "desc": "VP of Strategic Initiatives and Dean Zeke Bernstein says Bennington College’s weeklong summer courses are designed to help adults deepen their creative and intellectual practices.",
-    "category": "test-policy",
-    "date": "Apr 2026",
-    "url": "https://www.usnews.com/education/u-s-news-higher-ground/articles/2026-04-23/adult-education-summer-program-bennington"
-  },
-  {
-    "source": "usnews",
-    "isNew": true,
-    "title": "More Young Students – Even High Schoolers – Are Getting Undergraduate Credits",
-    "desc": "Students are increasingly completing undergraduate credentials at younger ages.",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.usnews.com/education/getting-in/articles/2026-04-23/college-highschool-student-undergraduate"
-  },
-  {
-    "source": "usnews",
-    "isNew": true,
-    "title": "Parental Guidance: Insider Tips on How to Get Off the Waitlist",
-    "desc": "A thoughtfully crafted letter of continued interest could be your key to admission from the waitlist.",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.usnews.com/education/getting-in/articles/2026-04-23/lci-counselor-college-waitlist-admissions"
-  },
-  {
-    "source": "usnews",
-    "isNew": true,
-    "title": "A ‘Life Skills Ecosystem’ for College Students in the Age of AI",
-    "desc": "High Point University President Nido Qubein details the school's emphasis on life skills and how it prepares students for the workforce.",
-    "category": "workforce",
-    "date": "Apr 2026",
-    "url": "https://www.usnews.com/education/getting-in/articles/2026-04-23/life-skills-high-point-university"
-  },
-  {
-    "source": "usnews",
-    "isNew": true,
-    "title": "Using Social Media to Amplify Student Voices",
-    "desc": "Amherst College Director of Social and New Media Stephanie Ramírez says communications staff building relationships with student content creators is key.",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.usnews.com/education/u-s-news-higher-ground/articles/2026-04-16/social-media-students-amherst"
-  },
-  {
-    "source": "usnews",
-    "isNew": true,
-    "title": "Campuswide AI Tools Meet Students Where They Are",
-    "desc": "Higher ed expert Melissa Morriss-Olson shares her latest EdTech innovation rave.",
-    "category": "test-policy",
-    "date": "Apr 2026",
-    "url": "https://www.usnews.com/education/u-s-news-higher-ground/articles/2026-04-16/ai-students-university-of-tennessee"
-  },
-  {
-    "source": "usnews",
-    "isNew": true,
-    "title": "A New Financial Aid Approach to Expand College Affordability",
-    "desc": "Colleges are offering free or reduced tuition to middle-class students to bridge the gap between insufficient financial aid packages and affordability.",
-    "category": "financial-aid",
-    "date": "Apr 2026",
-    "url": "https://www.usnews.com/education/u-s-news-higher-ground/articles/2026-04-16/financial-aid-free-tuition"
-  },
-  {
-    "source": "usnews",
-    "isNew": true,
-    "title": "College Degrees Are Still Worth the Investment",
-    "desc": "College graduates continue to earn more than those without a degree.",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.usnews.com/education/getting-in/articles/2026-04-16/college-degree-returns"
-  },
-  {
-    "source": "usnews",
-    "isNew": true,
-    "title": "First-Generation Student Support Runs Deep at Rutgers",
-    "desc": "Rutgers–New Brunswick enrollment vice chancellor Courtney McAnuff details the university’s student support programs.",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.usnews.com/education/getting-in/articles/2026-04-16/first-generation-student-life-rutgers"
-  },
-  {
-    "source": "insidehighered",
-    "isNew": true,
-    "title": "Report Highlights Men’s Precollege Sexual Education",
-    "desc": "Report Highlights Men’s Precollege Sexual Education
+const NEWS = []; // Populated dynamically from news.json by fetch() below
 
-              
+const _INITIAL_NEWS = [
+  // TEST POLICY
+  {source:'acceptu', isNew:true,  title:'6 of 8 Ivy League Schools Now Require SAT/ACT for Fall 2027', desc:'Harvard, Dartmouth, Brown, Cornell, Stanford, and UPenn have all moved back to requiring standardized test scores. Princeton has announced testing will be required for students entering Fall 2027.', category:'test-policy', date:'Apr 2026', url:'https://www.acceptu.com/blog/whats-really-changing-in-college-admissions-in-2026/'},
+  {source:'acceptu', isNew:true,  title:'Stanford Reinstates SAT/ACT Requirement Starting Fall 2026', desc:"Beginning with the 2025–26 application cycle, Stanford requires SAT or ACT scores for all first-year and transfer students. This marks a significant reversal of the school's pandemic-era test-optional policy.", category:'test-policy', date:'Apr 2026', url:'https://www.acceptu.com/blog/the-12-college-admissions-trend-for-2026/'},
+  {source:'acceptu', isNew:true,  title:'Cornell Requires SAT/ACT for All First-Year Applicants from Fall 2026', desc:'Effective for Fall 2026, Cornell first-year applicants must submit SAT or ACT scores. The university joins a growing list of elite schools reinstating standardized testing requirements.', category:'test-policy', date:'Apr 2026', url:'https://www.thecollegesage.com/blog/2025/6/10/the-return-of-test-requirements-colleges-that-now-require-sat-or-act-scores'},
+  {source:'bestcol', isNew:true,  title:'Ohio State Reinstates ACT/SAT Requirement for 2026 Admissions Cycle', desc:'Ohio State joins the growing list of major public universities reinstating standardized test requirements for new first-year undergraduate applicants to its Columbus campus.', category:'test-policy', date:'Apr 2026', url:'https://blog.collegevine.com/colleges-requiring-sat-act'},
+  {source:'usnews',  isNew:true,  title:'Why Top Colleges Are Reversing Test-Optional Policies in 2026', desc:'Grade inflation is driving the reversal — SAT and ACT scores have returned as one of the few consistent signals colleges use to verify academic strength.', category:'test-policy', date:'Apr 2026', url:'https://www.carnegieprep.com/college-admissions/college-admissions-testing-policy-updates/'},
+  {source:'usnews',  isNew:false, title:'UC System Remains Test-Blind for All Campuses in 2026', desc:'All University of California campuses continue to be test-blind — SAT/ACT scores are not reviewed at all in the admissions process — making them a standout exception to the national trend.', category:'test-policy', date:'Mar 2026', url:'https://scholarshipsandgrants.us/high-school-seniors/colleges-that-dont-require-sat-or-act-in-the-us/'},
 
+  // DEADLINES
+  {source:'ivycoach', isNew:true, title:'Early Application Surge: 70%+ of Class Now Filled Through ED/EA at Top Schools', desc:'Duke, Emory, the University of Virginia, and the University of Georgia all reported significant increases in early applications for Fall 2026. Many selective colleges now fill over 70% of their class through early rounds.', category:'deadlines', date:'Apr 2026', url:'https://www.collegematchpoint.com/early-application-surge-what-the-fall-2026-admissions-trends-reveal'},
+  {source:'ivycoach', isNew:true, title:'College Application Timeline for 2026–27 Cycle: Key Dates', desc:'Applications for fall 2027 open in August 2026. Most Early Decision and Early Action deadlines fall November 1. ED II deadlines are typically in January, offering a second binding-commitment option.', category:'deadlines', date:'Apr 2026', url:'https://www.ivywise.com/blog/college-application-deadlines/'},
+  {source:'cconf',    isNew:true, title:'Waitlist Activity Spring 2026: Movement Reported at Several Top Schools', desc:'Community tracking on College Confidential shows waitlist movement beginning at selective schools. Applicants are advised to send letters of continued interest promptly after being waitlisted.', category:'deadlines', date:'Apr 2026', url:'https://www.collegeconfidential.com'},
+  {source:'acceptu',  isNew:true, title:'The College Admissions Timeline Has Shifted — Apply Earlier Than Ever', desc:"Consultants warn that the window for strong applications is narrowing. With more than 70% of selective-school classes filled by December, students who wait for Regular Decision are increasingly at a structural disadvantage.", category:'deadlines', date:'Apr 2026', url:'https://www.acceptu.com/blog/college-admissions-trends-2026/'},
 
-      
-Johanna Alonso
+  // FINANCIAL AID
+  {source:'fafsa',  isNew:true,  title:'2026–27 FAFSA Launches On Time — First In Three Years', desc:'Federal Student Aid launched the 2026–27 FAFSA before its October 1 deadline, marking the first on-time launch in three years. The form hit 2 million submissions at the earliest milestone ever recorded.', category:'financial-aid', date:'Apr 2026', url:'https://www.edvisors.com/blog/2026-2027-fafsa/'},
+  {source:'fafsa',  isNew:true,  title:'New FAFSA Slashed from 100+ Questions to Just ~35', desc:'The redesigned FAFSA has been cut from more than 100 questions down to approximately 35, reducing completion time and the chance of errors. Most applicants will now see immediate processing confirmation.', category:'financial-aid', date:'Apr 2026', url:'https://www.bestcolleges.com/news/fafsa-updates-what-students-need-to-know-federal-financial-aid/'},
+  {source:'nasfaa', isNew:true,  title:'Big Changes Coming to Federal Financial Aid in 2026 — What to Expect', desc:'NASFAA outlines major structural changes to federal aid programs in 2026, including new adaptive fraud detection for FAFSA submissions and expected reductions in verification volume.', category:'financial-aid', date:'Apr 2026', url:'https://www.nasfaa.org/news-item/37968/Big_Changes_Coming_to_Federal_Financial_Aid_in_2026_Here_s_What_to_Expect'},
+  {source:'doed',   isNew:true,  title:'2026–27 FAFSA Specifications Guide Updated — April 2026', desc:'The Department of Education released the April 2026 update to the FAFSA Specifications Guide for the 2026–27 award year, with clarifications on SAI calculation and institutional data sharing.', category:'financial-aid', date:'Apr 2026', url:'https://fsapartners.ed.gov/knowledge-center/library/handbooks-manuals-or-guides/2025-02-26/2026-27-fafsa-specifications-guide-april-2026-update'},
+  {source:'fafsa',  isNew:false, title:'State FAFSA Deadlines: Priority Windows Closed in April 2026', desc:"West Virginia's WV Invests Grant required submission by April 15. Arizona's priority deadline was April 1. Students who missed these windows may still qualify for aid but could receive reduced awards.", category:'financial-aid', date:'Apr 2026', url:'https://www.fastweb.com/financial-aid/articles/financial-aid-and-fafsa-state-deadlines'},
 
-Wed, 04/29/2026 - 03:00 AM
+  // TRENDS
+  {source:'acceptu', isNew:true,  title:'AI Essay Detection Now Used at UVA, UC System, BYU, and More', desc:'Colleges are now deploying AI tools to detect AI-generated content in application essays. Essays that are specific, slightly imperfect, and clearly personal are standing out more than ever.', category:'trends', date:'Apr 2026', url:'https://www.acceptu.com/blog/whats-really-changing-in-college-admissions-in-2026/'},
+  {source:'usnews',  isNew:true,  title:"California's Legacy Preference Ban Now Fully in Effect for 2026 Cycle", desc:"California's ban on legacy preferences in college admissions is fully in place. Stanford and USC are reviewing applicants without giving any advantage to alumni children for the first time.", category:'trends', date:'Apr 2026', url:'https://www.acceptu.com/blog/the-12-college-admissions-trend-for-2026/'},
+  {source:'cconf',   isNew:true,  title:'Admissions Officers Increasingly Skeptical of "Resume-Padding" Activity Lists', desc:'Admissions officers at selective colleges report growing skepticism toward activity lists that look impressive but lack substance. One genuine project can carry more weight than five vague titles.', category:'trends', date:'Apr 2026', url:'https://www.saraharberson.com/blog/challenging-trends-facing-the-class-of-2026'},
+  {source:'acceptu', isNew:true,  title:'12 College Admissions Trends Shaping 2026', desc:"AcceptU's annual trend report highlights: the return of test requirements, the AI essay arms race, the ED surge, growing international competition, and the end of legacy admissions at California schools.", category:'trends', date:'Apr 2026', url:'https://www.acceptu.com/blog/the-12-college-admissions-trend-for-2026/'},
 
-
-  
-    Byline(s)
-          
-              Johanna Alonso
-              
-      ",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.insidehighered.com/news/quick-takes/2026/04/29/report-highlights-mens-precollege-sexual-education"
-  },
-  {
-    "source": "insidehighered",
-    "isNew": true,
-    "title": "Connecticut State Interim Chancellor Resigns",
-    "desc": "Connecticut State Interim Chancellor Resigns 
-
-              
-
-
-      
-Susan H. Greenberg
-
-Wed, 04/29/2026 - 03:00 AM
-
-
-  
-    Byline(s)
-          
-              Susan H. Greenberg
-              
-      ",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.insidehighered.com/news/quick-takes/2026/04/29/connecticut-state-interim-chancellor-steps-down"
-  },
-  {
-    "source": "insidehighered",
-    "isNew": true,
-    "title": "Faculty Concerned About ASU’s ‘Frankensteinian’ AI Course Builder",
-    "desc": "Faculty Concerned About ASU’s ‘Frankensteinian’ AI Course Builder
-
-              
-
-
-      
-Emma Whitford
-
-Wed, 04/29/2026 - 03:00 AM
-
-ASU debuted the web app quietly this month and faculty—whose content the AI pulls from—are concerned about how it works and who can access it.
-  
-",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.insidehighered.com/news/tech-innovation/artificial-intelligence/2026/04/29/faculty-concerned-about-asus-new-ai-course"
-  },
-  {
-    "source": "insidehighered",
-    "isNew": true,
-    "title": "Civil Rights Office Resolved 1% of Cases in 2025, Report Finds",
-    "desc": "Civil Rights Office Resolved 1% of Cases in 2025, Report Finds
-
-              
-
-
-      
-Johanna Alonso
-
-Wed, 04/29/2026 - 03:00 AM
-
-It’s the fewest resolution agreements in at least 12&nbsp;years, according to an analysis by Sen. Bernie Sanders’s office, including no resolutions ",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.insidehighered.com/news/students/safety/2026/04/29/sanders-civil-rights-office-resolved-1-cases-2025"
-  },
-  {
-    "source": "insidehighered",
-    "isNew": true,
-    "title": "3 Brown University Students Sue Over December Shooting",
-    "desc": "3 Brown University Students Sue Over December Shooting
-
-              
-
-
-      
-Ryan Quinn
-
-Wed, 04/29/2026 - 03:00 AM
-
-
-  
-    Byline(s)
-          
-              Ryan Quinn
-              
-      ",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.insidehighered.com/news/quick-takes/2026/04/29/3-brown-university-students-sue-over-december-shooting"
-  },
-  {
-    "source": "insidehighered",
-    "isNew": true,
-    "title": "Is Your AI Ethical, Human-Centered and Pro-Social?",
-    "desc": "Is Your AI Ethical, Human-Centered and Pro-Social?
-
-jdimaggio@upcea.edu
-
-Wed, 04/29/2026 - 03:00 AM
-
-Many of us utilize AI daily in our higher education work, yet we may not have assessed the ethical and human-centered nature of the tool we have selected and trained through our p",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.insidehighered.com/opinion/columns/online-trending-now/2026/04/29/your-ai-ethical-human-centered-and-pro-social"
-  },
-  {
-    "source": "insidehighered",
-    "isNew": true,
-    "title": "Possibly My Last View on the Trouble With Tenure",
-    "desc": "Possibly My Last View on the Trouble With Tenure
-
-              
-
-
-      
-Elizabeth Redden
-
-Wed, 04/29/2026 - 03:00 AM
-
-I’ve spent my whole career fighting against tenure. You can bet I’ll keep up the fight as long as I can.
-  
-    Byline(s)
-          
-              James C. Weth",
-    "category": "workforce",
-    "date": "Apr 2026",
-    "url": "https://www.insidehighered.com/opinion/views/2026/04/29/profs-possible-last-view-trouble-tenure-opinion"
-  },
-  {
-    "source": "insidehighered",
-    "isNew": true,
-    "title": "An On-the-Job Education",
-    "desc": "An On-the-Job Education
-
-              
-
-
-      
-justin.morriso…
-
-Wed, 04/29/2026 - 03:00 AM
-
-South Carolina technical college students can participate in a wide range of apprenticeship programs, from culinary arts to automotive care. Inside Higher Ed visited with some of the app",
-    "category": "workforce",
-    "date": "Apr 2026",
-    "url": "https://www.insidehighered.com/news/tech-innovation/alternative-credentials/2026/04/29/job-education"
-  },
-  {
-    "source": "insidehighered",
-    "isNew": true,
-    "title": "Mistakes Were Made—but Not in Academe",
-    "desc": "Mistakes Were Made—but Not in Academe
-
-              
-
-
-      
-rachel.toor
-
-Wed, 04/29/2026 - 03:00 AM
-
-Some of us have been thinking about all the ways we’ve messed up and earned some of the disdain we’re experiencing.
-  
-    Byline(s)
-          
-              Rachel Toor
-      ",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.insidehighered.com/opinion/columns/small-world/2026/04/29/what-if-we-admit-were-not-perfect"
-  },
-  {
-    "source": "insidehighered",
-    "isNew": true,
-    "title": "Saint Augustine’s Declares Bankruptcy but Won’t Close",
-    "desc": "Saint Augustine’s Declares Bankruptcy but Won’t Close
-
-              
-
-
-      
-Katherine Knott
-
-Tue, 04/28/2026 - 02:07 PM
-
-The beleaguered university will automatically lose eligibility for federal financial aid, so current students will have to finish their degrees at another i",
-    "category": "financial-aid",
-    "date": "Apr 2026",
-    "url": "https://www.insidehighered.com/news/business/financial-health/2026/04/28/saint-augustines-declares-bankruptcy-wont-close"
-  },
-  {
-    "source": "bls",
-    "isNew": true,
-    "title": "Major Economic Indicators Latest Numbers",
-    "desc": "Consumer Price Index (CPI):								
-																					+0.9%  in Mar 2026													News Release		
-																										Historical Data
-							
-																																			Unemployment Rate:								
-																					4.3%  in Mar 2026													News Release		",
-    "category": "workforce",
-    "date": "Apr 2026",
-    "url": "https://www.bls.gov/bls/"
-  },
-  {
-    "source": "hechinger",
-    "isNew": true,
-    "title": "AI gives more praise, less criticism to Black students",
-    "desc": "
-As schools introduce artificial intelligence into the classroom, a new analysis suggests that these tools could be steering students in different directions depending on who they are.&#160; Researchers from Stanford University fed 600 middle school essays into four different AI ",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://hechingerreport.org/proof-points-ai-bias-feedback/"
-  },
-  {
-    "source": "hechinger",
-    "isNew": true,
-    "title": "OPINION: The standards-driven pressure cooker of public education is the real crisis we must address",
-    "desc": "
-Over the last several years, much has been written about the surge in mental health problems among American youth, reinforced by the 2021 public advisory from the U.S. surgeon general that labeled this situation a “crisis.” The concerns are valid, but too often the focus has bee",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://hechingerreport.org/opinion-standards-driven-pressure-cooker-of-public-education/"
-  },
-  {
-    "source": "hechinger",
-    "isNew": true,
-    "title": "Kids and parents dislike math homework, so teachers are scrapping it. Will students be better off?",
-    "desc": "
-A few days into the new semester this January, the LaSalle Parish school district in rural Louisiana made a pronouncement: There would be no more homework.&#160; None of the 2,500 students in this district — from the youngest learners up through high school seniors — are require",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://hechingerreport.org/kids-parents-math-homework-teachers/"
-  },
-  {
-    "source": "hechinger",
-    "isNew": true,
-    "title": "Getting boys in on climate action",
-    "desc": "
-Why is caring for the planet considered ‘unmanly’?&#160; That’s a question Joseph Henderson, a lecturer at the University of Vermont, has been grappling with recently. There’s research suggesting that boys care less about the planet than girls, and are less likely to take climat",
-    "category": "test-policy",
-    "date": "Apr 2026",
-    "url": "https://hechingerreport.org/getting-boys-in-on-climate-action/"
-  },
-  {
-    "source": "hechinger",
-    "isNew": true,
-    "title": "The tricks teachers are trying to fix students’ shortening attention spans",
-    "desc": "
-TOLEDO, Ohio — William Werner’s first-grade class was squirming. Some of his students at McKinley STEAM Academy were still completing reading worksheets one morning last month while others who had long finished were building pyramids out of red cups, putting together puzzles and",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://hechingerreport.org/kids-attention-spans-teachers-are-trying-to-build-them-back-up/"
-  },
-  {
-    "source": "hechinger",
-    "isNew": true,
-    "title": "The future of AI in the classroom",
-    "desc": "
-I spent most of the last two weeks on the road in California at three education conferences that highlighted the risks – and potential benefits – of artificial intelligence in the classroom.&#160; The American Educational Research Association (AERA) and the National Council on M",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://hechingerreport.org/proof-points-future-ai-classroom/"
-  },
-  {
-    "source": "hechinger",
-    "isNew": true,
-    "title": "As deadline looms, $289 million in federal education research funding may go unspent",
-    "desc": "
-More than a third of the federal government’s education research budget — an estimated $289 million — could go unspent this year, according to an analysis by an advocacy group.&#160;&#160; The Knowledge Alliance, which represents 20 private research organizations including feder",
-    "category": "deadlines",
-    "date": "Apr 2026",
-    "url": "https://hechingerreport.org/proof-points-ies-unspent-funds/"
-  },
-  {
-    "source": "hechinger",
-    "isNew": true,
-    "title": "OPINION: Bringing different school districts together can bridge social divides and inspire change",
-    "desc": "
-Our national politics are divided and angry in a way that often feels beyond our control. The division doesn’t just stay “out there” but filters down to the community and school level. I worry about what kind of environment that creates for young people, growing up in a world of",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://hechingerreport.org/opinion-school-districts-bridge-social-divides/"
-  },
-  {
-    "source": "hechinger",
-    "isNew": true,
-    "title": "How much will that college cost you? Good luck figuring it out",
-    "desc": "
-Financial aid offer letters are supposed to tell families how much they will have to pay for college, which can be the deciding factor in where — or even whether — students go to college. But too often, the letters leave out important information and use terms that make it confu",
-    "category": "test-policy",
-    "date": "Apr 2026",
-    "url": "https://hechingerreport.org/how-much-will-that-college-cost-you-good-luck-figuring-it-out-2/"
-  },
-  {
-    "source": "npr",
-    "isNew": true,
-    "title": "Linda McMahon punches back at senators questioning Education Department cuts",
-    "desc": "In her first appearance on Capitol Hill this year, lawmakers questioned Education Secretary Linda McMahon about students' civil rights and cuts to federal education spending.",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.npr.org/2026/04/28/nx-s1-5802968/education-secretary-linda-mcmahon-senate-hearing"
-  },
-  {
-    "source": "npr",
-    "isNew": true,
-    "title": "As school choice expands in Iowa, one district is in a crisis from losing students",
-    "desc": "With school choice programs ascendant not just in Iowa but across the U.S., Cedar Rapids offers a preview of who wins and who loses when education meets the free market.",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.npr.org/2026/04/28/nx-s1-5793881/as-school-choice-expands-in-iowa-one-district-is-in-a-crisis-from-losing-students"
-  },
-  {
-    "source": "npr",
-    "isNew": true,
-    "title": "Should schools get rid of homework? Some educators are saying yes",
-    "desc": "Some experts worry that less homework could be a problem for math achievement, at a time when test scores nationwide are already at a dismal low.",
-    "category": "test-policy",
-    "date": "Apr 2026",
-    "url": "https://www.npr.org/2026/04/28/nx-s1-5795647/should-schools-get-rid-of-homework"
-  },
-  {
-    "source": "npr",
-    "isNew": true,
-    "title": "Inflation is sucking the life out of teacher pay raises, report says",
-    "desc": "A new review of state education data shows teacher pay increases can't keep up with inflation and fewer students are enrolled in public schools.",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.npr.org/2026/04/27/nx-s1-5791733/teacher-pay-rising-inflation"
-  },
-  {
-    "source": "npr",
-    "isNew": true,
-    "title": "Why emotional disturbance, a special ed category, is a double-edged sword for students",
-    "desc": "Every school has problem students, but some are labeled emotionally disturbed (ED) and taught separately from others.",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.npr.org/2026/04/26/g-s1-117447/school-disability-emotional-behavioral-disorder-special-education"
-  },
-  {
-    "source": "npr",
-    "isNew": true,
-    "title": "Inside Linda McMahon's effort to dismantle the Department of Education",
-    "desc": "A former pro-wrestling executive, McMahon is now the education secretary Trump tasked with abolishing the agency. New Yorker writer Zach Helfand explains how her WWE experience led her to this role.",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.npr.org/2026/04/22/nx-s1-5794689/from-professional-wrestling-to-the-department-of-education-inside-linda-mcmahons-effort-to-dismantle-the-department-of-education"
-  },
-  {
-    "source": "npr",
-    "isNew": true,
-    "title": "Trump administration delays rule aimed at improving disability access in schools",
-    "desc": "Schools, colleges and other public institutions originally had until this week to make online content accessible to people with disabilities. Now, the Justice Department has delayed that deadline.",
-    "category": "deadlines",
-    "date": "Apr 2026",
-    "url": "https://www.npr.org/2026/04/22/nx-s1-5791680/doj-disability-web-access-delay-schools"
-  },
-  {
-    "source": "npr",
-    "isNew": true,
-    "title": "Pittsburgh will close schools for NFL draft and switch to remote learning",
-    "desc": "The expected influx of fans later this week has led the school district to make a controversial decision: canceling in-person school.",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.npr.org/2026/04/20/nx-s1-5786711/pittsburgh-close-schools-nfl-draft"
-  },
-  {
-    "source": "npr",
-    "isNew": true,
-    "title": "School choice is booming in Iowa. Are students better off?",
-    "desc": "With school choice programs ascendant not just in Iowa but across the U.S., Cedar Rapids offers a preview of who wins and who loses when education meets the free market.",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.npr.org/2026/04/19/nx-s1-5683199/education-school-choice-iowa-students-charter-school-cedar-rapids"
-  },
-  {
-    "source": "npr",
-    "isNew": true,
-    "title": "Filmmaker Ken Burns on the planned closure of his alma mater Hampshire College",
-    "desc": "NPR's Leila Fadel speaks to filmmaker Ken Burns, an alumnus of Hampshire College, about the school's plan to permanently close at the end of the fall semester.",
-    "category": "trends",
-    "date": "Apr 2026",
-    "url": "https://www.npr.org/2026/04/16/nx-s1-5786537/filmmaker-ken-burns-on-the-planned-closure-of-his-alma-mater-hampshire-college"
-  }
+  // WORKFORCE
+  {source:'bls',    isNew:false, title:'BLS Occupational Outlook 2024–34: Fastest-Growing Degree Jobs', desc:"Bureau of Labor Statistics projections show software developers, nurse practitioners, and data scientists leading decade-long growth for bachelor's degree holders. Healthcare and tech continue to dominate.", category:'workforce', date:'Mar 2026', url:'https://www.bls.gov/ooh/'},
+  {source:'usnews', isNew:false, title:'College Degree Premium Remains Strong Despite Rising Tuition Concerns', desc:"Despite growing debate over college ROI, the wage premium for bachelor's degree holders versus high school graduates remains substantial, averaging 65–85% depending on field of study.", category:'workforce', date:'Feb 2026', url:'https://www.mcmillaneducation.com/blog/college-admissions-2025-trends-and-2026-predictions/'},
 ];
 
 const SCHOOLS = [
@@ -902,7 +416,19 @@ function quickLookup(name) {
   doLookup();
 }
 
-CATS.forEach(cat => { buildSrcChips(cat); renderList(cat); });
+// Load news from external JSON file (updated daily by GitHub Actions)
+let NEWS = _INITIAL_NEWS;
+fetch('./news.json')
+  .then(r => r.json())
+  .then(data => {
+    NEWS = data;
+    CATS.forEach(cat => { buildSrcChips(cat); renderList(cat); });
+  })
+  .catch(() => {
+    // Fallback: use hardcoded initial news if fetch fails
+    NEWS = _INITIAL_NEWS;
+    CATS.forEach(cat => { buildSrcChips(cat); renderList(cat); });
+  });
 </script>
 </body>
 </html>
