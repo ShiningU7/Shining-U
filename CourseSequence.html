@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Course Sequencer (Grades 6-12)</title>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --card: #ffffff;
+    --ink: #1a1a1a;
+    --muted: #6b6b6b;
+    --accent: #c96442;
+    --accent-soft: #f4e7e1;
+    --border: #e3e3df;
+    --standard: #2563eb;
+    --honors: #7c3aed;
+    --ap: #c96442;
+    --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    padding: 24px 16px 64px;
+  }
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+  }
+  header {
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: 28px;
+    margin: 0 0 6px;
+    font-weight: 600;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    margin: 0;
+  }
+  .controls {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .control-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+  }
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 15px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--ink);
+    font-family: inherit;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b6b6b' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+  }
+  select:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+  }
+  select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .checkbox-field {
+    display: flex;
+    align-items: flex-end;
+  }
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    padding-bottom: 10px;
+  }
+  .checkbox-label input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--accent);
+  }
+  .results {
+    display: none;
+  }
+  .results.visible { display: block; }
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .panel-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin: 0 0 10px;
+  }
+  .panel h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+    font-weight: 600;
+  }
+  .pathway {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-top: 1px solid var(--border);
+  }
+  .pathway:first-of-type { border-top: none; padding-top: 4px; }
+  .badge {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 4px 10px;
+    border-radius: 999px;
+    color: white;
+    min-width: 78px;
+    text-align: center;
+  }
+  .badge.standard { background: var(--standard); }
+  .badge.honors { background: var(--honors); }
+  .badge.ap { background: var(--ap); }
+  .pathway-text {
+    flex: 1;
+  }
+  .course-name {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 2px;
+  }
+  .course-note {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0;
+  }
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 28px 16px;
+    font-size: 14px;
+  }
+  .terminal {
+    background: var(--accent-soft);
+    border-color: #e8c9bc;
+  }
+  .terminal .panel-label { color: var(--accent); }
+  .note {
+    font-size: 13px;
+    color: var(--muted);
+    background: #fafaf8;
+    border-left: 3px solid var(--accent);
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-top: 14px;
+  }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 32px;
+  }
+  .timeline {
+    margin-top: 4px;
+  }
+  .tl-row {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+  }
+  .tl-grade {
+    flex-shrink: 0;
+    width: 44px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    padding-top: 14px;
+    text-align: right;
+  }
+  .tl-track {
+    flex-shrink: 0;
+    width: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .tl-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--border);
+    margin-top: 16px;
+    flex-shrink: 0;
+  }
+  .tl-line {
+    width: 2px;
+    flex: 1;
+    background: var(--border);
+    min-height: 8px;
+  }
+  .tl-row:last-child .tl-line { display: none; }
+  .tl-card {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 15px;
+    margin-bottom: 10px;
+  }
+  .tl-card-empty {
+    flex: 1;
+    padding: 11px 15px;
+    margin-bottom: 10px;
+    color: var(--muted);
+    font-size: 13px;
+    font-style: italic;
+  }
+  .tl-row.current .tl-card {
+    border-color: var(--accent);
+    border-width: 2px;
+    background: var(--accent-soft);
+    padding: 10px 14px;
+  }
+  .tl-row.current .tl-dot {
+    background: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+  .tl-row.past .tl-card { opacity: 0.9; }
+  .tl-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 3px;
+  }
+  .tl-phase {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+  .tl-row.current .tl-phase { color: var(--accent); }
+  .tl-course {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .tl-note {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 3px 0 0;
+  }
+  .tl-branch {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 6px 0 0;
+    padding-left: 10px;
+    border-left: 2px solid var(--border);
+  }
+  .tl-tracks {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .tl-tcard {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+  }
+  .tl-tcard.standard { border-top-color: var(--standard); }
+  .tl-tcard.honors { border-top-color: var(--honors); }
+  .tl-tcard.ap { border-top-color: var(--ap); }
+  .tl-tcard.empty { opacity: 0.5; }
+  .tl-tlabel {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-bottom: 3px;
+  }
+  .tl-tcourse {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .tl-tnone {
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .tl-tnote {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 3px 0 0;
+  }
+  @media (max-width: 640px) {
+    .tl-tracks { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Course Sequencer (Grades 6-12)</h1>
+    <p class="subtitle">Pick a student's current course; see the full grade 6&ndash;12 path &mdash; what should have come before, and what comes next through graduation. Sequences reflect typical US public/private school pathways.</p>
+  </header>
+
+  <div class="controls">
+    <div class="control-grid">
+      <div class="field">
+        <label for="state">State / Framework</label>
+        <select id="state">
+          <option value="">Default (typical US)</option>
+          <option value="CA">California (Integrated Math)</option>
+          <option value="NY">New York (Regents)</option>
+          <option value="TX">Texas (TEKS)</option>
+          <option value="FL">Florida (B.E.S.T.)</option>
+          <option value="VA">Virginia (SOL)</option>
+          <option value="MA">Massachusetts (MCAS)</option>
+          <option value="physics-first">Physics-First district</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="subject">Subject</label>
+        <select id="subject">
+          <option value="">Select...</option>
+          <option value="math">Math</option>
+          <option value="science">Science</option>
+          <option value="english">English / ELA</option>
+          <option value="social">Social Studies</option>
+          <option value="language">World Language</option>
+        </select>
+      </div>
+      <div class="field" id="languageField" style="display:none;">
+        <label for="language">Language</label>
+        <select id="language">
+          <option value="">Select...</option>
+          <option value="Spanish">Spanish</option>
+          <option value="French">French</option>
+          <option value="German">German</option>
+          <option value="Mandarin">Mandarin</option>
+          <option value="Latin">Latin</option>
+          <option value="Italian">Italian</option>
+          <option value="Japanese">Japanese</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="grade">Grade</label>
+        <select id="grade" disabled>
+          <option value="">Select...</option>
+          <option value="6">6th</option>
+          <option value="7">7th</option>
+          <option value="8">8th</option>
+          <option value="9">9th</option>
+          <option value="10">10th</option>
+          <option value="11">11th</option>
+          <option value="12">12th</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="course">Current course</label>
+        <select id="course" disabled>
+          <option value="">Select subject first...</option>
+        </select>
+      </div>
+      <div class="checkbox-field">
+        <label class="checkbox-label" for="offSequence">
+          <input type="checkbox" id="offSequence" />
+          <span>Show off-sequence courses (accelerated / off-cycle)</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div id="results" class="results"></div>
+  <div id="empty" class="empty">Pick a subject, grade, and current course to see the full grade 6&ndash;12 path.</div>
+
+  <footer>Sequences are typical defaults; individual schools and states vary. Always confirm with the student's school course catalog.</footer>
+</div>
+
+<script>
+/* ----------------------------- DATA ----------------------------- */
+
+/* Each course defines what naturally follows it. "nextSemester" applies
+   within the same school year when a course is split or paired.
+   "nextYear" gives the typical follow-on course(s) by track. */
+
+const MATH_COURSES = {
+  "Math 6": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "Math 7", note: "Standard middle-school sequence." },
+      { track: "honors", course: "Math 7 Accelerated", note: "For students strong in Math 6." }
+    ]
+  },
+  "Math 7": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "Pre-Algebra", note: "Standard 8th-grade math." },
+      { track: "honors", course: "Algebra 1 Honors", note: "For students ready to accelerate." }
+    ]
+  },
+  "Math 7 Accelerated": {
+    track: "honors",
+    nextSemester: { sameCourse: true, note: "Year-long course; compresses Pre-Algebra content." },
+    nextYear: [
+      { track: "standard", course: "Algebra 1", note: "Standard accelerated continuation." },
+      { track: "honors", course: "Algebra 1 Honors", note: "If grade was strong." }
+    ]
+  },
+  "Pre-Algebra": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Pre-Algebra is typically year-long." },
+    nextYear: [
+      { track: "standard", course: "Algebra 1", note: "Most common 9th-grade math." },
+      { track: "honors", course: "Algebra 1 Honors", note: "For students strong in pre-algebra." }
+    ]
+  },
+  "Algebra 1": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Algebra 1 runs the full year." },
+    nextYear: [
+      { track: "standard", course: "Geometry", note: "Standard sequence." },
+      { track: "honors", course: "Geometry Honors", note: "If grade in Algebra 1 was strong (B+ or higher)." }
+    ]
+  },
+  "Algebra 1 Honors": {
+    track: "honors",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "honors", course: "Geometry Honors", note: "Standard honors continuation." },
+      { track: "standard", course: "Geometry", note: "If easing track." }
+    ]
+  },
+  "Geometry": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "Algebra 2", note: "Standard sequence." },
+      { track: "honors", course: "Algebra 2 Honors", note: "If accelerating." }
+    ]
+  },
+  "Geometry Honors": {
+    track: "honors",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "honors", course: "Algebra 2 / Trigonometry Honors", note: "Standard honors path." },
+      { track: "standard", course: "Algebra 2", note: "If easing track." }
+    ]
+  },
+  "Algebra 2": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "Pre-Calculus", note: "Most common path for college-bound students." },
+      { track: "standard", course: "AP Statistics", note: "Alternative for non-STEM tracks." },
+      { track: "honors", course: "Pre-Calculus Honors", note: "If grade was strong." }
+    ]
+  },
+  "Algebra 2 / Trigonometry Honors": {
+    track: "honors",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "honors", course: "Pre-Calculus Honors", note: "Standard honors continuation." },
+      { track: "ap", course: "AP Pre-Calculus", note: "Newer AP option for strong students." }
+    ]
+  },
+  "Pre-Calculus": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "Calculus / AP Calculus AB", note: "Most common next step." },
+      { track: "standard", course: "AP Statistics", note: "Strong alternative; very useful for college." }
+    ]
+  },
+  "Pre-Calculus Honors": {
+    track: "honors",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "ap", course: "AP Calculus AB", note: "Standard honors-to-AP path." },
+      { track: "ap", course: "AP Calculus BC", note: "For students very strong in pre-calc." }
+    ]
+  },
+  "AP Pre-Calculus": {
+    track: "ap",
+    nextSemester: { sameCourse: true, note: "Year-long AP course." },
+    nextYear: [
+      { track: "ap", course: "AP Calculus AB or BC", note: "Direct continuation." },
+      { track: "ap", course: "AP Statistics", note: "Often paired with AP Calc senior year." }
+    ]
+  },
+  "AP Calculus AB": {
+    track: "ap",
+    nextSemester: { sameCourse: true, note: "Year-long AP course." },
+    nextYear: [
+      { track: "ap", course: "AP Calculus BC", note: "Some schools allow AB→BC; others combine." },
+      { track: "ap", course: "AP Statistics", note: "Often a senior-year pairing." },
+      { track: "ap", course: "Multivariable Calculus / Linear Algebra", note: "Post-AP, offered at some schools or via dual enrollment." }
+    ]
+  },
+  "AP Calculus BC": {
+    track: "ap",
+    nextSemester: { sameCourse: true, note: "Year-long AP course." },
+    nextYear: [
+      { track: "ap", course: "Multivariable Calculus", note: "Post-AP; via school, college, or dual enrollment." },
+      { track: "ap", course: "Linear Algebra", note: "Post-AP; via school, college, or dual enrollment." },
+      { track: "ap", course: "AP Statistics", note: "If not yet taken." }
+    ]
+  },
+  "AP Statistics": {
+    track: "ap",
+    nextSemester: { sameCourse: true, note: "Year-long AP course." },
+    nextYear: [
+      { track: "ap", course: "AP Calculus AB or BC", note: "If not yet taken." },
+      { track: "ap", course: "Multivariable Calculus / Linear Algebra", note: "If calculus complete." }
+    ]
+  }
+};
+
+const SCIENCE_COURSES = {
+  "Science 6": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "Science 7", note: "Standard middle-school sequence." }
+    ]
+  },
+  "Science 7": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "Science 8", note: "Standard middle-school sequence." }
+    ]
+  },
+  "Science 8": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course; some schools use Physical Science or Earth Science here." },
+    nextYear: [
+      { track: "standard", course: "Biology", note: "Standard 9th-grade science." },
+      { track: "honors", course: "Biology Honors", note: "If grade was strong." },
+      { track: "standard", course: "Physical Science", note: "Alternative 9th-grade entry at some schools." }
+    ]
+  },
+  "Physical Science": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "Biology", note: "Standard 9th-grade science." },
+      { track: "honors", course: "Biology Honors", note: "If grade was strong." }
+    ]
+  },
+  "Earth Science": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "Biology", note: "Standard 9th-grade science." },
+      { track: "honors", course: "Biology Honors", note: "If grade was strong." }
+    ]
+  },
+  "Biology": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "Chemistry", note: "Standard sequence." },
+      { track: "honors", course: "Chemistry Honors", note: "If grade was strong." }
+    ]
+  },
+  "Biology Honors": {
+    track: "honors",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "honors", course: "Chemistry Honors", note: "Standard honors continuation." },
+      { track: "ap", course: "AP Biology", note: "Some schools allow AP Bio after Bio Honors." }
+    ]
+  },
+  "Chemistry": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "Physics", note: "Standard sequence." },
+      { track: "standard", course: "Anatomy & Physiology", note: "Common alternative for pre-health interest." },
+      { track: "standard", course: "Environmental Science", note: "Alternative elective." }
+    ]
+  },
+  "Chemistry Honors": {
+    track: "honors",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "honors", course: "Physics Honors", note: "Standard honors continuation." },
+      { track: "ap", course: "AP Chemistry", note: "Direct continuation for chem-strong students." },
+      { track: "ap", course: "AP Biology", note: "Alternate AP option." }
+    ]
+  },
+  "Physics": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "ap", course: "AP Physics 1", note: "If interested in continuing physics." },
+      { track: "ap", course: "AP Environmental Science", note: "Common senior-year AP." },
+      { track: "standard", course: "Anatomy & Physiology", note: "Elective for health-track students." }
+    ]
+  },
+  "Physics Honors": {
+    track: "honors",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "ap", course: "AP Physics C: Mechanics", note: "Calculus-based; pair with calculus." },
+      { track: "ap", course: "AP Physics 2", note: "Algebra-based continuation." },
+      { track: "ap", course: "AP Chemistry or AP Biology", note: "If broadening science exposure." }
+    ]
+  },
+  "AP Biology": {
+    track: "ap",
+    nextSemester: { sameCourse: true, note: "Year-long AP course." },
+    nextYear: [
+      { track: "ap", course: "AP Chemistry", note: "Often taken in sequence for pre-med interest." },
+      { track: "ap", course: "AP Environmental Science", note: "Lighter AP load alternative." },
+      { track: "standard", course: "Anatomy & Physiology", note: "Strong fit for pre-health students." }
+    ]
+  },
+  "AP Chemistry": {
+    track: "ap",
+    nextSemester: { sameCourse: true, note: "Year-long AP course." },
+    nextYear: [
+      { track: "ap", course: "AP Physics 1, 2, or C", note: "Round out the science core." },
+      { track: "ap", course: "AP Biology", note: "If not yet taken." }
+    ]
+  },
+  "AP Physics 1": {
+    track: "ap",
+    nextSemester: { sameCourse: true, note: "Year-long AP course." },
+    nextYear: [
+      { track: "ap", course: "AP Physics 2", note: "Algebra-based continuation." },
+      { track: "ap", course: "AP Physics C: Mechanics", note: "Calculus-based; deeper study." }
+    ]
+  },
+  "AP Physics C: Mechanics": {
+    track: "ap",
+    nextSemester: { sameCourse: true, note: "Year-long AP course." },
+    nextYear: [
+      { track: "ap", course: "AP Physics C: E&M", note: "Natural continuation; often same year." },
+      { track: "ap", course: "AP Chemistry / AP Biology", note: "Broaden science exposure." }
+    ]
+  },
+  "AP Environmental Science": {
+    track: "ap",
+    nextSemester: { sameCourse: true, note: "Year-long AP course." },
+    nextYear: [
+      { track: "ap", course: "AP Biology or AP Chemistry", note: "If continuing science focus." }
+    ]
+  },
+  "Anatomy & Physiology": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "ap", course: "AP Biology", note: "Natural continuation for pre-health." },
+      { track: "standard", course: "Other science elective", note: "Forensics, Marine Biology, etc." }
+    ]
+  }
+};
+
+const ENGLISH_COURSES = {
+  "English 6": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "English 7", note: "Standard middle-school sequence." }
+    ]
+  },
+  "English 7": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "English 8", note: "Standard middle-school sequence." }
+    ]
+  },
+  "English 8": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "English 9", note: "Standard sequence." },
+      { track: "honors", course: "English 9 Honors", note: "If grade was strong." }
+    ]
+  },
+  "English 9": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "English 10", note: "Standard sequence." },
+      { track: "honors", course: "English 10 Honors", note: "If grade was strong." }
+    ]
+  },
+  "English 9 Honors": {
+    track: "honors",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "honors", course: "English 10 Honors", note: "Standard honors continuation." },
+      { track: "standard", course: "English 10", note: "If easing track." }
+    ]
+  },
+  "English 10": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "English 11 (American Lit)", note: "Standard junior-year focus." },
+      { track: "ap", course: "AP English Language & Composition", note: "Replaces English 11 in honors/AP track." }
+    ]
+  },
+  "English 10 Honors": {
+    track: "honors",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "ap", course: "AP English Language & Composition", note: "Standard honors-to-AP path." },
+      { track: "honors", course: "English 11 Honors", note: "If AP is not offered." }
+    ]
+  },
+  "English 11 (American Lit)": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "English 12 (British Lit / World Lit)", note: "Standard senior year." },
+      { track: "ap", course: "AP English Literature & Composition", note: "Senior-year AP option." }
+    ]
+  },
+  "AP English Language & Composition": {
+    track: "ap",
+    nextSemester: { sameCourse: true, note: "Year-long AP course." },
+    nextYear: [
+      { track: "ap", course: "AP English Literature & Composition", note: "Standard senior-year AP." },
+      { track: "standard", course: "English 12", note: "If easing AP load senior year." }
+    ]
+  },
+  "English 12 (British Lit / World Lit)": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "Graduation — no further English required.", note: "Final required English course." }
+    ]
+  },
+  "AP English Literature & Composition": {
+    track: "ap",
+    nextSemester: { sameCourse: true, note: "Year-long AP course." },
+    nextYear: [
+      { track: "ap", course: "Graduation — final AP English.", note: "No further English typically required." }
+    ]
+  }
+};
+
+const SOCIAL_COURSES = {
+  "Social Studies 6 (Ancient Civilizations)": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course; topics vary by district." },
+    nextYear: [
+      { track: "standard", course: "Social Studies 7 (World History / Geography)", note: "Standard middle-school sequence." }
+    ]
+  },
+  "Social Studies 7 (World History / Geography)": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course; topics vary by district." },
+    nextYear: [
+      { track: "standard", course: "US History 8 / Civics", note: "Standard 8th-grade social studies." }
+    ]
+  },
+  "US History 8 / Civics": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course; some schools split US History and Civics by semester." },
+    nextYear: [
+      { track: "standard", course: "World Geography", note: "Most common 9th-grade social studies entry." },
+      { track: "standard", course: "World History 1", note: "Alternative 9th-grade entry in some states." },
+      { track: "ap", course: "AP Human Geography", note: "Common 9th-grade AP — typically open to motivated 9th graders." }
+    ]
+  },
+  "World Geography": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "World History", note: "Standard sophomore sequence." },
+      { track: "honors", course: "World History Honors", note: "If grade was strong." },
+      { track: "ap", course: "AP World History: Modern", note: "Common honors-to-AP jump." }
+    ]
+  },
+  "AP Human Geography": {
+    track: "ap",
+    nextSemester: { sameCourse: true, note: "Year-long AP course." },
+    nextYear: [
+      { track: "ap", course: "AP World History: Modern", note: "Standard AP continuation." },
+      { track: "honors", course: "World History Honors", note: "If easing AP load." }
+    ]
+  },
+  "World History 1": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "World History 2", note: "Standard sequence." },
+      { track: "ap", course: "AP World History: Modern", note: "If accelerating." }
+    ]
+  },
+  "World History": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "US History", note: "Standard junior-year social studies." },
+      { track: "ap", course: "AP US History (APUSH)", note: "If grade was strong." }
+    ]
+  },
+  "World History Honors": {
+    track: "honors",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "ap", course: "AP US History (APUSH)", note: "Standard honors-to-AP path." },
+      { track: "honors", course: "US History Honors", note: "If APUSH not offered." }
+    ]
+  },
+  "World History 2": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "US History", note: "Standard junior-year social studies." },
+      { track: "ap", course: "AP US History (APUSH)", note: "If grade was strong." }
+    ]
+  },
+  "AP World History: Modern": {
+    track: "ap",
+    nextSemester: { sameCourse: true, note: "Year-long AP course." },
+    nextYear: [
+      { track: "ap", course: "AP US History (APUSH)", note: "Standard AP-to-AP path." },
+      { track: "ap", course: "AP European History", note: "Alternative AP option." }
+    ]
+  },
+  "AP European History": {
+    track: "ap",
+    nextSemester: { sameCourse: true, note: "Year-long AP course." },
+    nextYear: [
+      { track: "ap", course: "AP US History (APUSH)", note: "If not yet taken." },
+      { track: "ap", course: "AP Government / AP Economics", note: "Senior-year continuation." }
+    ]
+  },
+  "US History": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "Government & Economics", note: "Standard senior-year course (often semester-split)." },
+      { track: "ap", course: "AP US Government & Politics", note: "Senior-year AP option." },
+      { track: "ap", course: "AP Macroeconomics or AP Microeconomics", note: "Often paired with AP Gov." }
+    ]
+  },
+  "US History Honors": {
+    track: "honors",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "ap", course: "AP US Government & Politics", note: "Standard honors-to-AP senior path." },
+      { track: "ap", course: "AP Macroeconomics", note: "Common pairing with AP Gov." }
+    ]
+  },
+  "AP US History (APUSH)": {
+    track: "ap",
+    nextSemester: { sameCourse: true, note: "Year-long AP course." },
+    nextYear: [
+      { track: "ap", course: "AP US Government & Politics", note: "Standard senior-year AP." },
+      { track: "ap", course: "AP Macroeconomics", note: "Often paired with AP Gov as semester courses." },
+      { track: "ap", course: "AP Microeconomics", note: "Paired with AP Macro at many schools." },
+      { track: "ap", course: "AP Psychology", note: "Popular senior-year elective AP." }
+    ]
+  },
+  "Government & Economics": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Often split: Government one semester, Economics the other." },
+    nextYear: [
+      { track: "standard", course: "Graduation — no further social studies required.", note: "Final required social studies course." }
+    ]
+  },
+  "AP US Government & Politics": {
+    track: "ap",
+    nextSemester: { sameCourse: true, note: "Year-long AP course (or semester at some schools, paired with AP Macro/Micro)." },
+    nextYear: [
+      { track: "ap", course: "Graduation — final AP social studies.", note: "Typically no further social studies required." }
+    ]
+  },
+  "AP Macroeconomics": {
+    track: "ap",
+    nextSemester: { sameCourse: false, note: "Often a one-semester AP, commonly paired with AP Microeconomics or AP Government in the other semester." },
+    nextYear: [
+      { track: "ap", course: "AP Microeconomics", note: "Common semester pair." },
+      { track: "ap", course: "AP US Government & Politics", note: "Common semester pair." }
+    ]
+  },
+  "AP Microeconomics": {
+    track: "ap",
+    nextSemester: { sameCourse: false, note: "Often a one-semester AP, commonly paired with AP Macroeconomics." },
+    nextYear: [
+      { track: "ap", course: "AP Macroeconomics", note: "Common semester pair." },
+      { track: "ap", course: "AP US Government & Politics", note: "Senior-year complement." }
+    ]
+  },
+  "AP Psychology": {
+    track: "ap",
+    nextSemester: { sameCourse: true, note: "Year-long AP course (semester at some schools)." },
+    nextYear: [
+      { track: "ap", course: "Graduation or additional social studies elective.", note: "Often taken as a senior elective." }
+    ]
+  }
+};
+
+/* ----------------------------- STATE OVERRIDES ----------------------------- */
+
+/* California: Integrated Math (Math 1/2/3) replaces Algebra 1/Geometry/Algebra 2. */
+const CA_MATH_COURSES = {
+  "Math 1 (Integrated)": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long Integrated Math course." },
+    nextYear: [
+      { track: "standard", course: "Math 2 (Integrated)", note: "Standard CA integrated sequence." },
+      { track: "honors", course: "Math 2 Honors (Integrated)", note: "If grade was strong (B+ or higher)." }
+    ]
+  },
+  "Math 1 Honors (Integrated)": {
+    track: "honors",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "honors", course: "Math 2 Honors (Integrated)", note: "Standard honors continuation." }
+    ]
+  },
+  "Math 2 (Integrated)": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "Math 3 (Integrated)", note: "Standard CA integrated sequence." },
+      { track: "honors", course: "Math 3 Honors (Integrated)", note: "If grade was strong." }
+    ]
+  },
+  "Math 2 Honors (Integrated)": {
+    track: "honors",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "honors", course: "Math 3 Honors (Integrated)", note: "Standard honors continuation." }
+    ]
+  },
+  "Math 3 (Integrated)": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "standard", course: "Pre-Calculus", note: "Standard CA continuation." },
+      { track: "standard", course: "AP Statistics", note: "Alternative for non-STEM tracks." },
+      { track: "honors", course: "Pre-Calculus Honors", note: "If grade was strong." }
+    ]
+  },
+  "Math 3 Honors (Integrated)": {
+    track: "honors",
+    nextSemester: { sameCourse: true, note: "Year-long course." },
+    nextYear: [
+      { track: "honors", course: "Pre-Calculus Honors", note: "Standard honors continuation." },
+      { track: "ap", course: "AP Pre-Calculus", note: "Direct AP option at some districts." }
+    ]
+  }
+};
+
+const CA_MATH_GRADE_RANGES = {
+  "Math 1 (Integrated)": [8, 9, 10],
+  "Math 1 Honors (Integrated)": [8, 9],
+  "Math 2 (Integrated)": [9, 10, 11],
+  "Math 2 Honors (Integrated)": [9, 10],
+  "Math 3 (Integrated)": [10, 11, 12],
+  "Math 3 Honors (Integrated)": [10, 11]
+};
+
+/* New York: Regents-based social studies course names. */
+const NY_SOCIAL_COURSES = {
+  "Global History & Geography I": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long NY Regents course." },
+    nextYear: [
+      { track: "standard", course: "Global History & Geography II", note: "Standard NY sequence; Regents exam at end of year." }
+    ]
+  },
+  "Global History & Geography II": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long NY Regents course." },
+    nextYear: [
+      { track: "standard", course: "US History & Government", note: "Standard NY junior-year course; Regents exam." },
+      { track: "ap", course: "AP US History (APUSH)", note: "Often replaces Regents US History for advanced students." }
+    ]
+  },
+  "US History & Government": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Year-long NY Regents course." },
+    nextYear: [
+      { track: "standard", course: "Participation in Government / Economics", note: "Senior-year NY required course (typically semester-split)." },
+      { track: "ap", course: "AP US Government & Politics", note: "Senior AP option." }
+    ]
+  },
+  "Participation in Government / Economics": {
+    track: "standard",
+    nextSemester: { sameCourse: true, note: "Often split: Participation in Government one semester, Economics the other." },
+    nextYear: [
+      { track: "standard", course: "Graduation — no further social studies required.", note: "Final required NY social studies course." }
+    ]
+  }
+};
+
+const NY_SOCIAL_GRADE_RANGES = {
+  "Global History & Geography I": [9],
+  "Global History & Geography II": [10],
+  "US History & Government": [11],
+  "Participation in Government / Economics": [12]
+};
+
+/* Physics-First districts: Physics (9th) → Chemistry (10th) → Biology (11th). */
+const PHYSICS_FIRST_GRADE_RANGES = {
+  "Physical Science": [8],
+  "Earth Science": [8],
+  "Physics": [9, 10],
+  "Physics Honors": [9, 10],
+  "Chemistry": [10, 11],
+  "Chemistry Honors": [10, 11],
+  "Biology": [11, 12],
+  "Biology Honors": [11, 12],
+  "AP Biology": [11, 12],
+  "AP Chemistry": [11, 12],
+  "AP Physics 1": [9, 10, 11, 12],
+  "AP Physics C: Mechanics": [11, 12],
+  "AP Environmental Science": [10, 11, 12],
+  "Anatomy & Physiology": [11, 12]
+};
+
+/* Informational notes shown when a state is selected (regardless of subject). */
+const STATE_NOTES = {
+  "CA": "California districts commonly use Integrated Math (Math 1/2/3) instead of Algebra 1 → Geometry → Algebra 2. UC/CSU a-g requirements apply for college admission.",
+  "NY": "New York uses Regents-based social studies: Global History I/II (9th-10th), US History & Government (11th), Participation in Government/Economics (12th). Regents exams required for graduation.",
+  "TX": "Texas (TEKS): World Geography (9th, optional), World History (10th), US History since 1877 (11th), US Government & Economics (12th, semester-split). Algebra 1 + Algebra 1 EOC required.",
+  "FL": "Florida (B.E.S.T.): World History (9th-10th), US History (11th), Government & Economics (12th, semester-split). Civics required in middle school. Algebra 1 EOC required.",
+  "VA": "Virginia (SOL): World History/Geography to 1500 (9th), World History/Geography from 1500 (10th), VA & US History (11th), VA & US Government (12th).",
+  "MA": "Massachusetts (MCAS-aligned): typically Algebra 1 → Geometry → Algebra 2; US History I/II framework; civics project required.",
+  "physics-first": "Physics-First districts reverse the traditional science sequence: Physics (9th) → Chemistry (10th) → Biology (11th), with AP Biology often in 12th. Common in some NY, MA, and progressive private/charter schools."
+};
+
+/* World languages: same structure across most languages. We'll build per-language at runtime. */
+function buildLanguageCourses(lang) {
+  return {
+    [`${lang} 1`]: {
+      track: "standard",
+      nextSemester: { sameCourse: true, note: "Year-long course." },
+      nextYear: [{ track: "standard", course: `${lang} 2`, note: "Standard level progression." }]
+    },
+    [`${lang} 2`]: {
+      track: "standard",
+      nextSemester: { sameCourse: true, note: "Year-long course." },
+      nextYear: [
+        { track: "standard", course: `${lang} 3`, note: "Standard level progression." },
+        { track: "honors", course: `${lang} 3 Honors`, note: "If grade was strong." }
+      ]
+    },
+    [`${lang} 3`]: {
+      track: "standard",
+      nextSemester: { sameCourse: true, note: "Year-long course." },
+      nextYear: [
+        { track: "standard", course: `${lang} 4`, note: "Standard level progression." },
+        { track: "honors", course: `${lang} 4 Honors`, note: "If grade was strong." }
+      ]
+    },
+    [`${lang} 3 Honors`]: {
+      track: "honors",
+      nextSemester: { sameCourse: true, note: "Year-long course." },
+      nextYear: [
+        { track: "honors", course: `${lang} 4 Honors`, note: "Standard honors continuation." },
+        { track: "ap", course: `AP ${lang} Language & Culture`, note: "Some schools jump directly to AP." }
+      ]
+    },
+    [`${lang} 4`]: {
+      track: "standard",
+      nextSemester: { sameCourse: true, note: "Year-long course." },
+      nextYear: [
+        { track: "ap", course: `AP ${lang} Language & Culture`, note: "Standard AP entry point." },
+        { track: "honors", course: `${lang} 5 Honors`, note: "If AP not offered or pacing slower." }
+      ]
+    },
+    [`${lang} 4 Honors`]: {
+      track: "honors",
+      nextSemester: { sameCourse: true, note: "Year-long course." },
+      nextYear: [
+        { track: "ap", course: `AP ${lang} Language & Culture`, note: "Standard honors-to-AP path." }
+      ]
+    },
+    [`AP ${lang} Language & Culture`]: {
+      track: "ap",
+      nextSemester: { sameCourse: true, note: "Year-long AP course." },
+      nextYear: lang === "Spanish" || lang === "French" || lang === "Latin"
+        ? [
+            { track: "ap", course: `AP ${lang} Literature & Culture`, note: `Available for ${lang}; deepens literary analysis.` }
+          ]
+        : [
+            { track: "ap", course: `${lang} Conversation / Cultural Studies elective`, note: "Common post-AP option." }
+          ]
+    }
+  };
+}
+
+/* Typical grade ranges for each course (for filtering which courses appear by grade). */
+const COURSE_GRADE_RANGES = {
+  // Math
+  "Math 6": [6],
+  "Math 7": [7],
+  "Math 7 Accelerated": [7],
+  "Pre-Algebra": [7, 8],
+  "Algebra 1": [8, 9, 10],
+  "Algebra 1 Honors": [7, 8, 9],
+  "Geometry": [9, 10, 11],
+  "Geometry Honors": [8, 9, 10],
+  "Algebra 2": [10, 11, 12],
+  "Algebra 2 / Trigonometry Honors": [9, 10, 11],
+  "Pre-Calculus": [11, 12],
+  "Pre-Calculus Honors": [10, 11],
+  "AP Pre-Calculus": [10, 11, 12],
+  "AP Calculus AB": [11, 12],
+  "AP Calculus BC": [11, 12],
+  "AP Statistics": [11, 12],
+  // Science
+  "Science 6": [6],
+  "Science 7": [7],
+  "Science 8": [8],
+  "Physical Science": [8, 9],
+  "Earth Science": [8, 9],
+  "Biology": [9, 10],
+  "Biology Honors": [9, 10],
+  "Chemistry": [10, 11],
+  "Chemistry Honors": [10, 11],
+  "Physics": [11, 12],
+  "Physics Honors": [10, 11, 12],
+  "AP Biology": [11, 12],
+  "AP Chemistry": [11, 12],
+  "AP Physics 1": [10, 11, 12],
+  "AP Physics C: Mechanics": [11, 12],
+  "AP Environmental Science": [10, 11, 12],
+  "Anatomy & Physiology": [11, 12],
+  // English
+  "English 6": [6],
+  "English 7": [7],
+  "English 8": [8],
+  "English 9": [9],
+  "English 9 Honors": [9],
+  "English 10": [10],
+  "English 10 Honors": [10],
+  "English 11 (American Lit)": [11],
+  "AP English Language & Composition": [11, 12],
+  "English 12 (British Lit / World Lit)": [12],
+  "AP English Literature & Composition": [12],
+  // Social Science / Social Studies
+  "Social Studies 6 (Ancient Civilizations)": [6],
+  "Social Studies 7 (World History / Geography)": [7],
+  "US History 8 / Civics": [8],
+  "World Geography": [9],
+  "AP Human Geography": [9, 10],
+  "World History 1": [9],
+  "World History": [10],
+  "World History Honors": [10],
+  "World History 2": [10],
+  "AP World History: Modern": [10, 11],
+  "AP European History": [10, 11],
+  "US History": [11],
+  "US History Honors": [11],
+  "AP US History (APUSH)": [11],
+  "Government & Economics": [12],
+  "AP US Government & Politics": [12],
+  "AP Macroeconomics": [11, 12],
+  "AP Microeconomics": [11, 12],
+  "AP Psychology": [10, 11, 12]
+};
+
+/* ----------------------------- LOGIC ----------------------------- */
+
+const $ = (id) => document.getElementById(id);
+
+function getCourseDB() {
+  const subj = $("subject").value;
+  const state = $("state").value;
+  if (subj === "math") {
+    if (state === "CA") return { ...MATH_COURSES, ...CA_MATH_COURSES };
+    return MATH_COURSES;
+  }
+  if (subj === "science") return SCIENCE_COURSES;
+  if (subj === "english") return ENGLISH_COURSES;
+  if (subj === "social") {
+    if (state === "NY") return { ...SOCIAL_COURSES, ...NY_SOCIAL_COURSES };
+    return SOCIAL_COURSES;
+  }
+  if (subj === "language") {
+    const lang = $("language").value;
+    return lang ? buildLanguageCourses(lang) : {};
+  }
+  return {};
+}
+
+function gradeForCourse(courseName) {
+  const state = $("state").value;
+  if (state === "CA" && CA_MATH_GRADE_RANGES[courseName]) return CA_MATH_GRADE_RANGES[courseName];
+  if (state === "NY" && NY_SOCIAL_GRADE_RANGES[courseName]) return NY_SOCIAL_GRADE_RANGES[courseName];
+  if (state === "physics-first" && PHYSICS_FIRST_GRADE_RANGES[courseName]) return PHYSICS_FIRST_GRADE_RANGES[courseName];
+  return COURSE_GRADE_RANGES[courseName] || null;
+}
+
+function populateCourses() {
+  const courseSel = $("course");
+  const grade = parseInt($("grade").value, 10);
+  const db = getCourseDB();
+  const prevSelection = courseSel.value;
+
+  courseSel.innerHTML = '<option value="">Select course...</option>';
+  if (!grade || Object.keys(db).length === 0) {
+    courseSel.disabled = true;
+    return;
+  }
+
+  const subj = $("subject").value;
+  const showAll = $("offSequence").checked;
+  let courses = Object.keys(db);
+
+  // Filter by typical grade range — unless "off-sequence" is enabled.
+  if (!showAll && (subj === "math" || subj === "science" || subj === "english" || subj === "social")) {
+    courses = courses.filter(c => {
+      const range = gradeForCourse(c);
+      return !range || range.includes(grade);
+    });
+  }
+
+  courses.forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c;
+    opt.textContent = c;
+    courseSel.appendChild(opt);
+  });
+  courseSel.disabled = false;
+
+  // Keep the prior selection if it's still in the list.
+  if (prevSelection && courses.includes(prevSelection)) {
+    courseSel.value = prevSelection;
+  }
+}
+
+function trackBadge(track) {
+  const map = { standard: "Standard", honors: "Honors", ap: "AP" };
+  return `<span class="badge ${track}">${map[track] || track}</span>`;
+}
+
+function renderPathway(p) {
+  return `
+    <div class="pathway">
+      ${trackBadge(p.track)}
+      <div class="pathway-text">
+        <p class="course-name">${p.course}</p>
+        ${p.note ? `<p class="course-note">${p.note}</p>` : ""}
+      </div>
+    </div>
+  `;
+}
+
+/* ---------- Full-path builders ---------- */
+
+const isGraduation = (name) => /^Graduation/i.test(name);
+
+/* All courses in the active DB whose nextYear leads into `courseName`. */
+function findPrevCourses(courseName, db) {
+  const out = [];
+  for (const key of Object.keys(db)) {
+    const ny = db[key].nextYear || [];
+    for (const entry of ny) {
+      if (entry.course === courseName) {
+        out.push({ course: key, track: db[key].track, note: entry.note });
+      }
+    }
+  }
+  return out;
+}
+
+/* Choose the best predecessor: prefer same track + grade fit, then grade fit, then track, then first. */
+function pickPrev(prevs, fromTrack, targetGrade) {
+  if (prevs.length === 0) return null;
+  const fits = (p) => { const r = gradeForCourse(p.course); return r ? r.includes(targetGrade) : false; };
+  return (
+    prevs.find(p => p.track === fromTrack && fits(p)) ||
+    prevs.find(p => fits(p)) ||
+    prevs.find(p => p.track === fromTrack) ||
+    prevs[0]
+  );
+}
+
+/* Walk backward from the current course toward grade 6. Returns { grade: {course, track, note} }. */
+function buildBackward(courseName, currentGrade, db) {
+  const map = {};
+  let cur = courseName;
+  let curTrack = (db[cur] && db[cur].track) || "standard";
+  let g = currentGrade;
+  let guard = 0;
+  while (g > 6 && guard++ < 12) {
+    const prevs = findPrevCourses(cur, db);
+    const pick = pickPrev(prevs, curTrack, g - 1);
+    if (!pick) break;
+    map[g - 1] = { course: pick.course, track: pick.track, note: pick.note };
+    cur = pick.course;
+    curTrack = pick.track;
+    g--;
+  }
+  return map;
+}
+
+/* From a nextYear list, pick the course that continues `fromTrack`; the rest become branches. */
+function pickForward(nextYear, fromTrack) {
+  const list = nextYear || [];
+  if (list.length === 0) return { primary: null, branches: [] };
+  const primary =
+    list.find(e => e.track === fromTrack) ||
+    list.find(e => e.track === "standard") ||
+    list[0];
+  const branches = list.filter(e => e !== primary);
+  return { primary, branches };
+}
+
+/* Walk forward from the current course toward grade 12. Returns { grade: {course, track, note, branches} }. */
+function buildForward(courseName, currentGrade, db) {
+  const map = {};
+  let cur = courseName;
+  let g = currentGrade;
+  let guard = 0;
+  while (g < 12 && guard++ < 12) {
+    const course = db[cur];
+    if (!course) break;
+    const { primary, branches } = pickForward(course.nextYear, course.track);
+    if (!primary) break;
+    map[g + 1] = { course: primary.course, track: primary.track, note: primary.note, branches };
+    g++;
+    if (isGraduation(primary.course)) break;
+    cur = primary.course;
+  }
+  return map;
+}
+
+function subjectLabel() {
+  const sel = $("subject");
+  if (sel.value === "language" && $("language").value) return $("language").value;
+  return sel.options[sel.selectedIndex].text;
+}
+
+function timelineRow(grade, entry, phase, isCurrent) {
+  const phaseLabel = { past: "Previously", current: "Current course", future: "Planned" }[phase];
+  if (!entry) {
+    return `
+      <div class="tl-row ${phase}">
+        <div class="tl-grade">${grade}th</div>
+        <div class="tl-track"><div class="tl-dot"></div><div class="tl-line"></div></div>
+        <div class="tl-card-empty">No core course mapped for this grade — likely an elective year, or the student joined this sequence off-cycle.</div>
+      </div>
+    `;
+  }
+  const badge = entry.track ? trackBadge(entry.track) : "";
+  let branchHtml = "";
+  if (entry.branches && entry.branches.length) {
+    branchHtml = `<p class="tl-branch">Could branch to: ${entry.branches.map(b => `${b.course}${b.track ? " (" + b.track + ")" : ""}`).join("; ")}.</p>`;
+  }
+  return `
+    <div class="tl-row ${phase}${isCurrent ? " current" : ""}">
+      <div class="tl-grade">${grade}th</div>
+      <div class="tl-track"><div class="tl-dot"></div><div class="tl-line"></div></div>
+      <div class="tl-card">
+        <div class="tl-head">
+          <span class="tl-phase">${phaseLabel}</span>
+          ${badge}
+        </div>
+        <div class="tl-course">${entry.course}</div>
+        ${entry.note ? `<p class="tl-note">${entry.note}</p>` : ""}
+        ${branchHtml}
+      </div>
+    </div>
+  `;
+}
+
+/* ---------- Three-track forward projection ---------- */
+
+const TRACK_RANK = { standard: 0, honors: 1, ap: 2 };
+
+/* Pick the nextYear entry that best serves a target track (exact match, else closest rigor). */
+function pickForwardForTrack(nextYear, targetTrack) {
+  const list = nextYear || [];
+  if (!list.length) return null;
+  const exact = list.find(e => e.track === targetTrack);
+  if (exact) return exact;
+  const want = TRACK_RANK[targetTrack];
+  return list.slice().sort((a, b) => {
+    const da = Math.abs(TRACK_RANK[a.track] - want);
+    const db = Math.abs(TRACK_RANK[b.track] - want);
+    if (da !== db) return da - db;
+    return TRACK_RANK[b.track] - TRACK_RANK[a.track];
+  })[0];
+}
+
+/* Walk forward from the current course toward grade 12, biased toward `targetTrack`. */
+function buildForwardForTrack(courseName, currentGrade, db, targetTrack) {
+  const map = {};
+  let cur = courseName;
+  let g = currentGrade;
+  let guard = 0;
+  while (g < 12 && guard++ < 12) {
+    const course = db[cur];
+    if (!course) break;
+    const pick = pickForwardForTrack(course.nextYear, targetTrack);
+    if (!pick) break;
+    map[g + 1] = { course: pick.course, track: pick.track, note: pick.note };
+    g++;
+    if (isGraduation(pick.course)) break;
+    cur = pick.course;
+  }
+  return map;
+}
+
+/* A future-grade row split into Standard / Honors / AP columns. */
+function multiTrackRow(grade, cols) {
+  const cells = cols.map(c => {
+    if (!c.entry) {
+      return `<div class="tl-tcard ${c.track} empty">
+        <div class="tl-tlabel">${c.label}</div>
+        <div class="tl-tnone">&mdash;</div>
+      </div>`;
+    }
+    return `<div class="tl-tcard ${c.entry.track}">
+      <div class="tl-tlabel">${c.label}</div>
+      <div class="tl-tcourse">${c.entry.course}</div>
+      ${c.entry.note ? `<p class="tl-tnote">${c.entry.note}</p>` : ""}
+    </div>`;
+  }).join("");
+  return `
+    <div class="tl-row future">
+      <div class="tl-grade">${grade}th</div>
+      <div class="tl-track"><div class="tl-dot"></div><div class="tl-line"></div></div>
+      <div class="tl-tracks">${cells}</div>
+    </div>
+  `;
+}
+
+function render() {
+  const subj = $("subject").value;
+  const grade = parseInt($("grade").value, 10);
+  const courseName = $("course").value;
+  const langOK = subj !== "language" || $("language").value;
+
+  const results = $("results");
+  const empty = $("empty");
+
+  if (!subj || !grade || !courseName || !langOK) {
+    results.classList.remove("visible");
+    results.innerHTML = "";
+    empty.style.display = "block";
+    return;
+  }
+
+  const db = getCourseDB();
+  const course = db[courseName];
+  if (!course) {
+    results.classList.remove("visible");
+    results.innerHTML = "";
+    empty.style.display = "block";
+    return;
+  }
+
+  empty.style.display = "none";
+  results.classList.add("visible");
+
+  const state = $("state").value;
+  const backward = buildBackward(courseName, grade, db);
+  const fStandard = buildForwardForTrack(courseName, grade, db, "standard");
+  const fHonors = buildForwardForTrack(courseName, grade, db, "honors");
+  const fAp = buildForwardForTrack(courseName, grade, db, "ap");
+
+  let html = "";
+
+  // State framework note (if a state is selected)
+  if (state && STATE_NOTES[state]) {
+    const stateLabel = $("state").options[$("state").selectedIndex].text;
+    html += `
+      <div class="panel">
+        <p class="panel-label">${stateLabel}</p>
+        <p class="course-note">${STATE_NOTES[state]}</p>
+      </div>
+    `;
+  }
+
+  // Full-path timeline, grade 6 through 12
+  html += `<div class="panel"><p class="panel-label">Full path — ${subjectLabel()} (grades 6&ndash;12)</p><div class="timeline">`;
+  for (let g = 6; g <= 12; g++) {
+    if (g < grade) {
+      html += timelineRow(g, backward[g], "past", false);
+    } else if (g === grade) {
+      const curNote = course.nextSemester ? course.nextSemester.note : "";
+      html += timelineRow(g, { course: courseName, track: course.track, note: curNote }, "current", true);
+    } else {
+      html += multiTrackRow(g, [
+        { label: "Standard", track: "standard", entry: fStandard[g] },
+        { label: "Honors", track: "honors", entry: fHonors[g] },
+        { label: "AP", track: "ap", entry: fAp[g] }
+      ]);
+    }
+  }
+  html += `</div>`;
+  html += `<div class="note">Future grades show three projected tracks side by side. The AP column climbs through honors courses at steps where no AP option exists yet, and tracks may converge on the same course. Backward path shows the typical prerequisite chain. Always confirm against the student's actual transcript and school course catalog.</div>`;
+  html += `</div>`;
+
+  results.innerHTML = html;
+}
+
+/* ----------------------------- EVENTS ----------------------------- */
+
+$("state").addEventListener("change", () => {
+  // Re-populate courses if a subject + grade are already chosen,
+  // since course list (and grade ranges) can change with state.
+  if ($("subject").value && $("grade").value) {
+    populateCourses();
+  }
+  render();
+});
+
+$("subject").addEventListener("change", () => {
+  const subj = $("subject").value;
+  $("languageField").style.display = subj === "language" ? "" : "none";
+  $("grade").disabled = !subj || (subj === "language" && !$("language").value);
+  $("course").disabled = true;
+  $("course").innerHTML = '<option value="">Select course...</option>';
+  $("grade").value = "";
+  render();
+});
+
+$("language").addEventListener("change", () => {
+  const ready = $("subject").value === "language" && $("language").value;
+  $("grade").disabled = !ready;
+  $("course").disabled = true;
+  $("course").innerHTML = '<option value="">Select course...</option>';
+  $("grade").value = "";
+  render();
+});
+
+$("grade").addEventListener("change", () => {
+  populateCourses();
+  render();
+});
+
+$("offSequence").addEventListener("change", () => {
+  if ($("subject").value && $("grade").value) {
+    populateCourses();
+  }
+  render();
+});
+
+$("course").addEventListener("change", render);
+
+</script>
+</body>
+</html>
